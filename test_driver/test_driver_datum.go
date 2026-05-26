@@ -11,21 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//+build !codes
+//go:build !codes
+// +build !codes
 
 package test_driver
 
 import (
-	"bytes"
-	"encoding/hex"
-	"fmt"
-	"math"
-	"strconv"
-	"strings"
-
-	"github.com/pingcap/errors"
-	"github.com/pingcap/parser/charset"
-	"github.com/pingcap/parser/mysql"
 	"github.com/pingcap/parser/types"
 )
 
@@ -63,213 +54,124 @@ type Datum struct {
 
 // Kind gets the kind of the datum.
 func (d *Datum) Kind() byte {
-	return d.k
+	_ = "STUB: not implemented"
+
+	// GetInt64 gets int64 value.
+	return 0
 }
 
-// GetInt64 gets int64 value.
 func (d *Datum) GetInt64() int64 {
-	return d.i
+	_ = "STUB: not implemented"
+
+	// SetInt64 sets int64 value.
+	return 0
 }
 
-// SetInt64 sets int64 value.
-func (d *Datum) SetInt64(i int64) {
-	d.k = KindInt64
-	d.i = i
-}
+func (d *Datum) SetInt64(i int64) { _ = "STUB: not implemented"; return }
 
 // GetUint64 gets uint64 value.
 func (d *Datum) GetUint64() uint64 {
-	return uint64(d.i)
+	_ = "STUB: not implemented"
+
+	// SetUint64 sets uint64 value.
+	return 0
 }
 
-// SetUint64 sets uint64 value.
-func (d *Datum) SetUint64(i uint64) {
-	d.k = KindUint64
-	d.i = int64(i)
-}
+func (d *Datum) SetUint64(i uint64) { _ = "STUB: not implemented"; return }
 
 // GetFloat64 gets float64 value.
-func (d *Datum) GetFloat64() float64 {
-	return math.Float64frombits(uint64(d.i))
-}
+func (d *Datum) GetFloat64() float64 { _ = "STUB: not implemented"; return 0 }
 
 // SetFloat64 sets float64 value.
-func (d *Datum) SetFloat64(f float64) {
-	d.k = KindFloat64
-	d.i = int64(math.Float64bits(f))
-}
+func (d *Datum) SetFloat64(f float64) { _ = "STUB: not implemented"; return }
 
 // GetFloat32 gets float32 value.
-func (d *Datum) GetFloat32() float32 {
-	return float32(math.Float64frombits(uint64(d.i)))
-}
+func (d *Datum) GetFloat32() float32 { _ = "STUB: not implemented"; return 0 }
 
 // SetFloat32 sets float32 value.
-func (d *Datum) SetFloat32(f float32) {
-	d.k = KindFloat32
-	d.i = int64(math.Float64bits(float64(f)))
-}
+func (d *Datum) SetFloat32(f float32) { _ = "STUB: not implemented"; return }
 
 // GetString gets string value.
 func (d *Datum) GetString() string {
-	return string(d.b)
+	_ = "STUB: not implemented"
+
+	// SetString sets string value.
+	return ""
 }
 
-// SetString sets string value.
-func (d *Datum) SetString(s string) {
-	d.k = KindString
-	d.b = []byte(s)
-}
+func (d *Datum) SetString(s string) { _ = "STUB: not implemented"; return }
 
 // GetBytes gets bytes value.
 func (d *Datum) GetBytes() []byte {
-	return d.b
+	_ = "STUB: not implemented"
+
+	// SetBytes sets bytes value to datum.
+	return nil
 }
 
-// SetBytes sets bytes value to datum.
-func (d *Datum) SetBytes(b []byte) {
-	d.k = KindBytes
-	d.b = b
-}
+func (d *Datum) SetBytes(b []byte) { _ = "STUB: not implemented"; return }
 
 // SetBytesAsString sets bytes value to datum as string type.
-func (d *Datum) SetBytesAsString(b []byte) {
-	d.k = KindString
-	d.b = b
-}
+func (d *Datum) SetBytesAsString(b []byte) { _ = "STUB: not implemented"; return }
 
 // GetInterface gets interface value.
 func (d *Datum) GetInterface() interface{} {
-	return d.x
+	_ = "STUB: not implemented"
+
+	// SetInterface sets interface to datum.
+	return nil
 }
 
-// SetInterface sets interface to datum.
-func (d *Datum) SetInterface(x interface{}) {
-	d.k = KindInterface
-	d.x = x
-}
+func (d *Datum) SetInterface(x interface{}) { _ = "STUB: not implemented"; return }
 
 // SetNull sets datum to nil.
-func (d *Datum) SetNull() {
-	d.k = KindNull
-	d.x = nil
-}
+func (d *Datum) SetNull() { _ = "STUB: not implemented"; return }
 
 // GetBinaryLiteral gets Bit value
 func (d *Datum) GetBinaryLiteral() BinaryLiteral {
-	return d.b
+	_ = "STUB: not implemented"
+
+	// SetBinaryLiteral sets Bit value
+	return *new(BinaryLiteral)
 }
 
-// SetBinaryLiteral sets Bit value
-func (d *Datum) SetBinaryLiteral(b BinaryLiteral) {
-	d.k = KindBinaryLiteral
-	d.b = b
-}
+func (d *Datum) SetBinaryLiteral(b BinaryLiteral) { _ = "STUB: not implemented"; return }
 
 // GetMysqlDecimal gets Decimal value
-func (d *Datum) GetMysqlDecimal() *MyDecimal {
-	return d.x.(*MyDecimal)
-}
+func (d *Datum) GetMysqlDecimal() *MyDecimal { _ = "STUB: not implemented"; return nil }
 
 // SetMysqlDecimal sets Decimal value
-func (d *Datum) SetMysqlDecimal(b *MyDecimal) {
-	d.k = KindMysqlDecimal
-	d.x = b
-}
+func (d *Datum) SetMysqlDecimal(b *MyDecimal) { _ = "STUB: not implemented"; return }
 
 // GetValue gets the value of the datum of any kind.
-func (d *Datum) GetValue() interface{} {
-	switch d.k {
-	case KindInt64:
-		return d.GetInt64()
-	case KindUint64:
-		return d.GetUint64()
-	case KindFloat32:
-		return d.GetFloat32()
-	case KindFloat64:
-		return d.GetFloat64()
-	case KindString:
-		return d.GetString()
-	case KindBytes:
-		return d.GetBytes()
-	case KindMysqlDecimal:
-		return d.GetMysqlDecimal()
-	case KindBinaryLiteral, KindMysqlBit:
-		return d.GetBinaryLiteral()
-	default:
-		return d.GetInterface()
-	}
-}
+func (d *Datum) GetValue() interface{} { _ = "STUB: not implemented"; return nil }
 
 // SetValue sets any kind of value.
-func (d *Datum) SetValue(val interface{}) {
-	switch x := val.(type) {
-	case nil:
-		d.SetNull()
-	case bool:
-		if x {
-			d.SetInt64(1)
-		} else {
-			d.SetInt64(0)
-		}
-	case int:
-		d.SetInt64(int64(x))
-	case int64:
-		d.SetInt64(x)
-	case uint64:
-		d.SetUint64(x)
-	case float32:
-		d.SetFloat32(x)
-	case float64:
-		d.SetFloat64(x)
-	case string:
-		d.SetString(x)
-	case []byte:
-		d.SetBytes(x)
-	case *MyDecimal:
-		d.SetMysqlDecimal(x)
-	case BinaryLiteral:
-		d.SetBinaryLiteral(x)
-	case BitLiteral: // Store as BinaryLiteral for Bit and Hex literals
-		d.SetBinaryLiteral(BinaryLiteral(x))
-	case HexLiteral:
-		d.SetBinaryLiteral(BinaryLiteral(x))
-	default:
-		d.SetInterface(x)
-	}
-}
+func (d *Datum) SetValue(val interface{}) { _ = "STUB: not implemented"; return }
+
+// Store as BinaryLiteral for Bit and Hex literals
 
 // NewDatum creates a new Datum from an interface{}.
-func NewDatum(in interface{}) (d Datum) {
-	switch x := in.(type) {
-	case []interface{}:
-		d.SetValue(MakeDatums(x...))
-	default:
-		d.SetValue(in)
-	}
-	return d
-}
+func NewDatum(in interface{}) (d Datum) { _ = "STUB: not implemented"; return *new(Datum) }
 
 // NewBytesDatum creates a new Datum from a byte slice.
 func NewBytesDatum(b []byte) (d Datum) {
-	d.SetBytes(b)
-	return d
+	_ = "STUB: not implemented"
+	return *
+
+	// NewStringDatum creates a new Datum from a string.
+	new(Datum)
 }
 
-// NewStringDatum creates a new Datum from a string.
 func NewStringDatum(s string) (d Datum) {
-	d.SetString(s)
-	return d
+	_ = "STUB: not implemented"
+	return *
+
+	// MakeDatums creates datum slice from interfaces.
+	new(Datum)
 }
 
-// MakeDatums creates datum slice from interfaces.
-func MakeDatums(args ...interface{}) []Datum {
-	datums := make([]Datum, len(args))
-	for i, v := range args {
-		datums[i] = NewDatum(v)
-	}
-	return datums
-}
+func MakeDatums(args ...interface{}) []Datum { _ = "STUB: not implemented"; return nil }
 
 // BinaryLiteral is the internal type for storing bit / hex literal type.
 type BinaryLiteral []byte
@@ -284,144 +186,66 @@ type HexLiteral BinaryLiteral
 var ZeroBinaryLiteral = BinaryLiteral{}
 
 // String implements fmt.Stringer interface.
-func (b BinaryLiteral) String() string {
-	if len(b) == 0 {
-		return ""
-	}
-	return "0x" + hex.EncodeToString(b)
-}
+func (b BinaryLiteral) String() string { _ = "STUB: not implemented"; return "" }
 
 // ToString returns the string representation for the literal.
 func (b BinaryLiteral) ToString() string {
-	return string(b)
+	_ = "STUB: not implemented"
+
+	// ToBitLiteralString returns the bit literal representation for the literal.
+	return ""
 }
 
-// ToBitLiteralString returns the bit literal representation for the literal.
 func (b BinaryLiteral) ToBitLiteralString(trimLeadingZero bool) string {
-	if len(b) == 0 {
-		return "b''"
-	}
-	var buf bytes.Buffer
-	for _, data := range b {
-		fmt.Fprintf(&buf, "%08b", data)
-	}
-	ret := buf.Bytes()
-	if trimLeadingZero {
-		ret = bytes.TrimLeft(ret, "0")
-		if len(ret) == 0 {
-			ret = []byte{'0'}
-		}
-	}
-	return fmt.Sprintf("b'%s'", string(ret))
+	_ = "STUB: not implemented"
+	return ""
 }
 
 // ParseBitStr parses bit string.
 // The string format can be b'val', B'val' or 0bval, val must be 0 or 1.
 // See https://dev.mysql.com/doc/refman/5.7/en/bit-value-literals.html
 func ParseBitStr(s string) (BinaryLiteral, error) {
-	if len(s) == 0 {
-		return nil, errors.Errorf("invalid empty string for parsing bit type")
-	}
-
-	if s[0] == 'b' || s[0] == 'B' {
-		// format is b'val' or B'val'
-		s = strings.Trim(s[1:], "'")
-	} else if strings.HasPrefix(s, "0b") {
-		s = s[2:]
-	} else {
-		// here means format is not b'val', B'val' or 0bval.
-		return nil, errors.Errorf("invalid bit type format %s", s)
-	}
-
-	if len(s) == 0 {
-		return ZeroBinaryLiteral, nil
-	}
-
-	alignedLength := (len(s) + 7) &^ 7
-	s = ("00000000" + s)[len(s)+8-alignedLength:] // Pad with zero (slice from `-alignedLength`)
-	byteLength := len(s) >> 3
-	buf := make([]byte, byteLength)
-
-	for i := 0; i < byteLength; i++ {
-		strPosition := i << 3
-		val, err := strconv.ParseUint(s[strPosition:strPosition+8], 2, 8)
-		if err != nil {
-			return nil, errors.Trace(err)
-		}
-		buf[i] = byte(val)
-	}
-
-	return buf, nil
+	_ = "STUB: not implemented"
+	return *new(BinaryLiteral), nil
 }
+
+// format is b'val' or B'val'
+
+// here means format is not b'val', B'val' or 0bval.
+
+// Pad with zero (slice from `-alignedLength`)
 
 // NewBitLiteral parses bit string as BitLiteral type.
 func NewBitLiteral(s string) (BitLiteral, error) {
-	b, err := ParseBitStr(s)
-	if err != nil {
-		return BitLiteral{}, err
-	}
-	return BitLiteral(b), nil
+	_ = "STUB: not implemented"
+	return *new(BitLiteral), nil
 }
 
 // ToString implement ast.BinaryLiteral interface
-func (b BitLiteral) ToString() string {
-	return BinaryLiteral(b).ToString()
-}
+func (b BitLiteral) ToString() string { _ = "STUB: not implemented"; return "" }
 
 // ParseHexStr parses hexadecimal string literal.
 // See https://dev.mysql.com/doc/refman/5.7/en/hexadecimal-literals.html
 func ParseHexStr(s string) (BinaryLiteral, error) {
-	if len(s) == 0 {
-		return nil, errors.Errorf("invalid empty string for parsing hexadecimal literal")
-	}
-
-	if s[0] == 'x' || s[0] == 'X' {
-		// format is x'val' or X'val'
-		s = strings.Trim(s[1:], "'")
-		if len(s)%2 != 0 {
-			return nil, errors.Errorf("invalid hexadecimal format, must even numbers, but %d", len(s))
-		}
-	} else if strings.HasPrefix(s, "0x") {
-		s = s[2:]
-	} else {
-		// here means format is not x'val', X'val' or 0xval.
-		return nil, errors.Errorf("invalid hexadecimal format %s", s)
-	}
-
-	if len(s) == 0 {
-		return ZeroBinaryLiteral, nil
-	}
-
-	if len(s)%2 != 0 {
-		s = "0" + s
-	}
-	buf, err := hex.DecodeString(s)
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
-	return buf, nil
+	_ = "STUB: not implemented"
+	return *new(BinaryLiteral), nil
 }
+
+// format is x'val' or X'val'
+
+// here means format is not x'val', X'val' or 0xval.
 
 // NewHexLiteral parses hexadecimal string as HexLiteral type.
 func NewHexLiteral(s string) (HexLiteral, error) {
-	h, err := ParseHexStr(s)
-	if err != nil {
-		return HexLiteral{}, err
-	}
-	return HexLiteral(h), nil
+	_ = "STUB: not implemented"
+	return *new(HexLiteral), nil
 }
 
 // ToString implement ast.BinaryLiteral interface
-func (b HexLiteral) ToString() string {
-	return BinaryLiteral(b).ToString()
-}
+func (b HexLiteral) ToString() string { _ = "STUB: not implemented"; return "" }
 
 // SetBinChsClnFlag sets charset, collation as 'binary' and adds binaryFlag to FieldType.
-func SetBinChsClnFlag(ft *types.FieldType) {
-	ft.Charset = charset.CharsetBin
-	ft.Collate = charset.CollationBin
-	ft.Flag |= mysql.BinaryFlag
-}
+func SetBinChsClnFlag(ft *types.FieldType) { _ = "STUB: not implemented"; return }
 
 // DefaultFsp is the default digit of fractional seconds part.
 // MySQL use 0 as the default Fsp.
@@ -429,83 +253,8 @@ const DefaultFsp = int8(0)
 
 // DefaultTypeForValue returns the default FieldType for the value.
 func DefaultTypeForValue(value interface{}, tp *types.FieldType, charset string, collate string) {
-	switch x := value.(type) {
-	case nil:
-		tp.Tp = mysql.TypeNull
-		tp.Flen = 0
-		tp.Decimal = 0
-		SetBinChsClnFlag(tp)
-	case bool:
-		tp.Tp = mysql.TypeLonglong
-		tp.Flen = 1
-		tp.Decimal = 0
-		tp.Flag |= mysql.IsBooleanFlag
-		SetBinChsClnFlag(tp)
-	case int:
-		tp.Tp = mysql.TypeLonglong
-		tp.Flen = StrLenOfInt64Fast(int64(x))
-		tp.Decimal = 0
-		SetBinChsClnFlag(tp)
-	case int64:
-		tp.Tp = mysql.TypeLonglong
-		tp.Flen = StrLenOfInt64Fast(x)
-		tp.Decimal = 0
-		SetBinChsClnFlag(tp)
-	case uint64:
-		tp.Tp = mysql.TypeLonglong
-		tp.Flag |= mysql.UnsignedFlag
-		tp.Flen = StrLenOfUint64Fast(x)
-		tp.Decimal = 0
-		SetBinChsClnFlag(tp)
-	case string:
-		tp.Tp = mysql.TypeVarString
-		// TODO: tp.Flen should be len(x) * 3 (max bytes length of CharsetUTF8)
-		tp.Flen = len(x)
-		tp.Decimal = types.UnspecifiedLength
-		tp.Charset, tp.Collate = charset, collate
-	case float32:
-		tp.Tp = mysql.TypeFloat
-		s := strconv.FormatFloat(float64(x), 'f', -1, 32)
-		tp.Flen = len(s)
-		tp.Decimal = types.UnspecifiedLength
-		SetBinChsClnFlag(tp)
-	case float64:
-		tp.Tp = mysql.TypeDouble
-		s := strconv.FormatFloat(x, 'f', -1, 64)
-		tp.Flen = len(s)
-		tp.Decimal = types.UnspecifiedLength
-		SetBinChsClnFlag(tp)
-	case []byte:
-		tp.Tp = mysql.TypeBlob
-		tp.Flen = len(x)
-		tp.Decimal = types.UnspecifiedLength
-		SetBinChsClnFlag(tp)
-	case BitLiteral:
-		tp.Tp = mysql.TypeVarString
-		tp.Flen = len(x)
-		tp.Decimal = 0
-		SetBinChsClnFlag(tp)
-	case HexLiteral:
-		tp.Tp = mysql.TypeVarString
-		tp.Flen = len(x) * 3
-		tp.Decimal = 0
-		tp.Flag |= mysql.UnsignedFlag
-		SetBinChsClnFlag(tp)
-	case BinaryLiteral:
-		tp.Tp = mysql.TypeBit
-		tp.Flen = len(x) * 8
-		tp.Decimal = 0
-		SetBinChsClnFlag(tp)
-		tp.Flag &= ^mysql.BinaryFlag
-		tp.Flag |= mysql.UnsignedFlag
-	case *MyDecimal:
-		tp.Tp = mysql.TypeNewDecimal
-		tp.Flen = len(x.ToString())
-		tp.Decimal = int(x.digitsFrac)
-		SetBinChsClnFlag(tp)
-	default:
-		tp.Tp = mysql.TypeUnspecified
-		tp.Flen = types.UnspecifiedLength
-		tp.Decimal = types.UnspecifiedLength
-	}
+	_ = "STUB: not implemented"
+	return
 }
+
+// TODO: tp.Flen should be len(x) * 3 (max bytes length of CharsetUTF8)

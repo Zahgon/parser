@@ -14,12 +14,9 @@
 package ast
 
 import (
-	"fmt"
 	"io"
-	"strings"
 	"time"
 
-	"github.com/pingcap/errors"
 	"github.com/pingcap/parser/format"
 	"github.com/pingcap/parser/model"
 	"github.com/pingcap/parser/types"
@@ -371,165 +368,18 @@ type FuncCallExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *FuncCallExpr) Restore(ctx *format.RestoreCtx) error {
-	var specialLiteral string
-	switch n.FnName.L {
-	case DateLiteral:
-		specialLiteral = "DATE "
-	case TimeLiteral:
-		specialLiteral = "TIME "
-	case TimestampLiteral:
-		specialLiteral = "TIMESTAMP "
-	}
-	if specialLiteral != "" {
-		ctx.WritePlain(specialLiteral)
-		if err := n.Args[0].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCastExpr.Expr")
-		}
-		return nil
-	}
-
-	if len(n.Schema.String()) != 0 {
-		ctx.WriteName(n.Schema.O)
-		ctx.WritePlain(".")
-	}
-	if n.Tp == FuncCallExprTypeGeneric {
-		ctx.WriteName(n.FnName.O)
-	} else {
-		ctx.WriteKeyWord(n.FnName.O)
-	}
-
-	ctx.WritePlain("(")
-	switch n.FnName.L {
-	case "convert":
-		if err := n.Args[0].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCastExpr.Expr")
-		}
-		ctx.WriteKeyWord(" USING ")
-		if err := n.Args[1].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCastExpr.Expr")
-		}
-	case "adddate", "subdate", "date_add", "date_sub":
-		if err := n.Args[0].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.Args[0]")
-		}
-		ctx.WritePlain(", ")
-		ctx.WriteKeyWord("INTERVAL ")
-		if err := n.Args[1].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.Args[1]")
-		}
-		ctx.WritePlain(" ")
-		if err := n.Args[2].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.Args[2]")
-		}
-	case "extract":
-		if err := n.Args[0].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.Args[0]")
-		}
-		ctx.WriteKeyWord(" FROM ")
-		if err := n.Args[1].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.Args[1]")
-		}
-	case "position":
-		if err := n.Args[0].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCallExpr")
-		}
-		ctx.WriteKeyWord(" IN ")
-		if err := n.Args[1].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCallExpr")
-		}
-	case "trim":
-		switch len(n.Args) {
-		case 3:
-			if err := n.Args[2].Restore(ctx); err != nil {
-				return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.Args[2]")
-			}
-			ctx.WritePlain(" ")
-			fallthrough
-		case 2:
-			if expr, isValue := n.Args[1].(ValueExpr); !isValue || expr.GetValue() != nil {
-				if err := n.Args[1].Restore(ctx); err != nil {
-					return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.Args[1]")
-				}
-				ctx.WritePlain(" ")
-			}
-			ctx.WriteKeyWord("FROM ")
-			fallthrough
-		case 1:
-			if err := n.Args[0].Restore(ctx); err != nil {
-				return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.Args[0]")
-			}
-		}
-	case WeightString:
-		if err := n.Args[0].Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.(WEIGHT_STRING).Args[0]")
-		}
-		if len(n.Args) == 3 {
-			ctx.WriteKeyWord(" AS ")
-			ctx.WriteKeyWord(n.Args[1].(ValueExpr).GetValue().(string))
-			ctx.WritePlain("(")
-			if err := n.Args[2].Restore(ctx); err != nil {
-				return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.(WEIGHT_STRING).Args[2]")
-			}
-			ctx.WritePlain(")")
-		}
-	default:
-		for i, argv := range n.Args {
-			if i != 0 {
-				ctx.WritePlain(", ")
-			}
-			if err := argv.Restore(ctx); err != nil {
-				return errors.Annotatef(err, "An error occurred while restore FuncCallExpr.Args %d", i)
-			}
-		}
-	}
-	ctx.WritePlain(")")
-	return nil
-}
+func (n *FuncCallExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *FuncCallExpr) Format(w io.Writer) {
-	fmt.Fprintf(w, "%s(", n.FnName.L)
-	if !n.specialFormatArgs(w) {
-		for i, arg := range n.Args {
-			arg.Format(w)
-			if i != len(n.Args)-1 {
-				fmt.Fprint(w, ", ")
-			}
-		}
-	}
-	fmt.Fprint(w, ")")
-}
+func (n *FuncCallExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // specialFormatArgs formats argument list for some special functions.
-func (n *FuncCallExpr) specialFormatArgs(w io.Writer) bool {
-	switch n.FnName.L {
-	case DateAdd, DateSub, AddDate, SubDate:
-		n.Args[0].Format(w)
-		fmt.Fprint(w, ", INTERVAL ")
-		n.Args[1].Format(w)
-		fmt.Fprint(w, " ")
-		n.Args[2].Format(w)
-		return true
-	}
-	return false
-}
+func (n *FuncCallExpr) specialFormatArgs(w io.Writer) bool { _ = "STUB: not implemented"; return false }
 
 // Accept implements Node interface.
 func (n *FuncCallExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*FuncCallExpr)
-	for i, val := range n.Args {
-		node, ok := val.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Args[i] = node.(ExprNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // CastFunctionType is the type for cast function.
@@ -557,69 +407,15 @@ type FuncCastExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *FuncCastExpr) Restore(ctx *format.RestoreCtx) error {
-	switch n.FunctionType {
-	case CastFunction:
-		ctx.WriteKeyWord("CAST")
-		ctx.WritePlain("(")
-		if err := n.Expr.Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCastExpr.Expr")
-		}
-		ctx.WriteKeyWord(" AS ")
-		n.Tp.RestoreAsCastType(ctx, n.ExplicitCharSet)
-		ctx.WritePlain(")")
-	case CastConvertFunction:
-		ctx.WriteKeyWord("CONVERT")
-		ctx.WritePlain("(")
-		if err := n.Expr.Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCastExpr.Expr")
-		}
-		ctx.WritePlain(", ")
-		n.Tp.RestoreAsCastType(ctx, n.ExplicitCharSet)
-		ctx.WritePlain(")")
-	case CastBinaryOperator:
-		ctx.WriteKeyWord("BINARY ")
-		if err := n.Expr.Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore FuncCastExpr.Expr")
-		}
-	}
-	return nil
-}
+func (n *FuncCastExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *FuncCastExpr) Format(w io.Writer) {
-	switch n.FunctionType {
-	case CastFunction:
-		fmt.Fprint(w, "CAST(")
-		n.Expr.Format(w)
-		fmt.Fprint(w, " AS ")
-		n.Tp.FormatAsCastType(w, n.ExplicitCharSet)
-		fmt.Fprint(w, ")")
-	case CastConvertFunction:
-		fmt.Fprint(w, "CONVERT(")
-		n.Expr.Format(w)
-		fmt.Fprint(w, ", ")
-		n.Tp.FormatAsCastType(w, n.ExplicitCharSet)
-		fmt.Fprint(w, ")")
-	case CastBinaryOperator:
-		fmt.Fprint(w, "BINARY ")
-		n.Expr.Format(w)
-	}
-}
+func (n *FuncCastExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *FuncCastExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*FuncCastExpr)
-	node, ok := n.Expr.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Expr = node.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // TrimDirectionType is the type for trim direction.
@@ -637,18 +433,7 @@ const (
 )
 
 // String implements fmt.Stringer interface.
-func (direction TrimDirectionType) String() string {
-	switch direction {
-	case TrimBoth, TrimBothDefault:
-		return "BOTH"
-	case TrimLeading:
-		return "LEADING"
-	case TrimTrailing:
-		return "TRAILING"
-	default:
-		return ""
-	}
-}
+func (direction TrimDirectionType) String() string { _ = "STUB: not implemented"; return "" }
 
 // TrimDirectionExpr is an expression representing the trim direction used in the TRIM() function.
 type TrimDirectionExpr struct {
@@ -659,22 +444,17 @@ type TrimDirectionExpr struct {
 
 // Restore implements Node interface.
 func (n *TrimDirectionExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord(n.Direction.String())
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *TrimDirectionExpr) Format(w io.Writer) {
-	fmt.Fprint(w, n.Direction.String())
-}
+func (n *TrimDirectionExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *TrimDirectionExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // DateArithType is type for DateArith type.
@@ -747,72 +527,17 @@ type AggregateFuncExpr struct {
 
 // Restore implements Node interface.
 func (n *AggregateFuncExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord(n.F)
-	ctx.WritePlain("(")
-	if n.Distinct {
-		ctx.WriteKeyWord("DISTINCT ")
-	}
-	switch strings.ToLower(n.F) {
-	case "group_concat":
-		for i := 0; i < len(n.Args)-1; i++ {
-			if i != 0 {
-				ctx.WritePlain(", ")
-			}
-			if err := n.Args[i].Restore(ctx); err != nil {
-				return errors.Annotatef(err, "An error occurred while restore AggregateFuncExpr.Args[%d]", i)
-			}
-		}
-		if n.Order != nil {
-			ctx.WritePlain(" ")
-			if err := n.Order.Restore(ctx); err != nil {
-				return errors.Annotate(err, "An error occur while restore AggregateFuncExpr.Args Order")
-			}
-		}
-		ctx.WriteKeyWord(" SEPARATOR ")
-		if err := n.Args[len(n.Args)-1].Restore(ctx); err != nil {
-			return errors.Annotate(err, "An error occurred while restore AggregateFuncExpr.Args SEPARATOR")
-		}
-	default:
-		for i, argv := range n.Args {
-			if i != 0 {
-				ctx.WritePlain(", ")
-			}
-			if err := argv.Restore(ctx); err != nil {
-				return errors.Annotatef(err, "An error occurred while restore AggregateFuncExpr.Args[%d]", i)
-			}
-		}
-	}
-	ctx.WritePlain(")")
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *AggregateFuncExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *AggregateFuncExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *AggregateFuncExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*AggregateFuncExpr)
-	for i, val := range n.Args {
-		node, ok := val.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Args[i] = node.(ExprNode)
-	}
-	if n.Order != nil {
-		node, ok := n.Order.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Order = node.(*OrderByClause)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 const (
@@ -863,58 +588,17 @@ type WindowFuncExpr struct {
 
 // Restore implements Node interface.
 func (n *WindowFuncExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord(n.F)
-	ctx.WritePlain("(")
-	for i, v := range n.Args {
-		if i != 0 {
-			ctx.WritePlain(", ")
-		} else if n.Distinct {
-			ctx.WriteKeyWord("DISTINCT ")
-		}
-		if err := v.Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore WindowFuncExpr.Args[%d]", i)
-		}
-	}
-	ctx.WritePlain(")")
-	if n.FromLast {
-		ctx.WriteKeyWord(" FROM LAST")
-	}
-	if n.IgnoreNull {
-		ctx.WriteKeyWord(" IGNORE NULLS")
-	}
-	ctx.WriteKeyWord(" OVER ")
-	if err := n.Spec.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore WindowFuncExpr.Spec")
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format formats the window function expression into a Writer.
-func (n *WindowFuncExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *WindowFuncExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *WindowFuncExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*WindowFuncExpr)
-	for i, val := range n.Args {
-		node, ok := val.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Args[i] = node.(ExprNode)
-	}
-	node, ok := n.Spec.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Spec = *node.(*WindowSpec)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // TimeUnitType is the type for time and timestamp units.
@@ -966,75 +650,14 @@ const (
 )
 
 // String implements fmt.Stringer interface.
-func (unit TimeUnitType) String() string {
-	switch unit {
-	case TimeUnitMicrosecond:
-		return "MICROSECOND"
-	case TimeUnitSecond:
-		return "SECOND"
-	case TimeUnitMinute:
-		return "MINUTE"
-	case TimeUnitHour:
-		return "HOUR"
-	case TimeUnitDay:
-		return "DAY"
-	case TimeUnitWeek:
-		return "WEEK"
-	case TimeUnitMonth:
-		return "MONTH"
-	case TimeUnitQuarter:
-		return "QUARTER"
-	case TimeUnitYear:
-		return "YEAR"
-	case TimeUnitSecondMicrosecond:
-		return "SECOND_MICROSECOND"
-	case TimeUnitMinuteMicrosecond:
-		return "MINUTE_MICROSECOND"
-	case TimeUnitMinuteSecond:
-		return "MINUTE_SECOND"
-	case TimeUnitHourMicrosecond:
-		return "HOUR_MICROSECOND"
-	case TimeUnitHourSecond:
-		return "HOUR_SECOND"
-	case TimeUnitHourMinute:
-		return "HOUR_MINUTE"
-	case TimeUnitDayMicrosecond:
-		return "DAY_MICROSECOND"
-	case TimeUnitDaySecond:
-		return "DAY_SECOND"
-	case TimeUnitDayMinute:
-		return "DAY_MINUTE"
-	case TimeUnitDayHour:
-		return "DAY_HOUR"
-	case TimeUnitYearMonth:
-		return "YEAR_MONTH"
-	default:
-		return ""
-	}
-}
+func (unit TimeUnitType) String() string { _ = "STUB: not implemented"; return "" }
 
 // Duration represented by this unit.
 // Returns error if the time unit is not a fixed time interval (such as MONTH)
 // or a composite unit (such as MINUTE_SECOND).
 func (unit TimeUnitType) Duration() (time.Duration, error) {
-	switch unit {
-	case TimeUnitMicrosecond:
-		return time.Microsecond, nil
-	case TimeUnitSecond:
-		return time.Second, nil
-	case TimeUnitMinute:
-		return time.Minute, nil
-	case TimeUnitHour:
-		return time.Hour, nil
-	case TimeUnitDay:
-		return time.Hour * 24, nil
-	case TimeUnitWeek:
-		return time.Hour * 24 * 7, nil
-	case TimeUnitMonth, TimeUnitQuarter, TimeUnitYear:
-		return 0, errors.Errorf("%s is not a constant time interval and cannot be used here", unit)
-	default:
-		return 0, errors.Errorf("%s is a composite time unit and is not supported yet", unit)
-	}
+	_ = "STUB: not implemented"
+	return *new(time.Duration), nil
 }
 
 // TimeUnitExpr is an expression representing a time or timestamp unit.
@@ -1045,23 +668,15 @@ type TimeUnitExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *TimeUnitExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord(n.Unit.String())
-	return nil
-}
+func (n *TimeUnitExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *TimeUnitExpr) Format(w io.Writer) {
-	fmt.Fprint(w, n.Unit.String())
-}
+func (n *TimeUnitExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *TimeUnitExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // GetFormatSelectorType is the type for the first argument of GET_FORMAT() function.
@@ -1084,35 +699,19 @@ type GetFormatSelectorExpr struct {
 }
 
 // String implements fmt.Stringer interface.
-func (selector GetFormatSelectorType) String() string {
-	switch selector {
-	case GetFormatSelectorDate:
-		return "DATE"
-	case GetFormatSelectorTime:
-		return "TIME"
-	case GetFormatSelectorDatetime:
-		return "DATETIME"
-	default:
-		return ""
-	}
-}
+func (selector GetFormatSelectorType) String() string { _ = "STUB: not implemented"; return "" }
 
 // Restore implements Node interface.
 func (n *GetFormatSelectorExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord(n.Selector.String())
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *GetFormatSelectorExpr) Format(w io.Writer) {
-	fmt.Fprint(w, n.Selector.String())
-}
+func (n *GetFormatSelectorExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *GetFormatSelectorExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }

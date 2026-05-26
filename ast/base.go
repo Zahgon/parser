@@ -26,53 +26,73 @@ type node struct {
 
 // SetOriginTextPosition implements Node interface.
 func (n *node) SetOriginTextPosition(offset int) {
-	n.offset = offset
+	_ = "STUB: not implemented"
+
+	// OriginTextPosition implements Node interface.
+	return
 }
 
-// OriginTextPosition implements Node interface.
 func (n *node) OriginTextPosition() int {
-	return n.offset
+	_ = "STUB: not implemented"
+
+	// SetText implements Node interface.
+	return 0
 }
 
-// SetText implements Node interface.
 func (n *node) SetText(text string) {
-	n.text = text
+	_ = "STUB: not implemented"
+
+	// Text implements Node interface.
+	return
 }
 
-// Text implements Node interface.
 func (n *node) Text() string {
-	return n.text
+	_ = "STUB: not implemented"
+
+	// stmtNode implements StmtNode interface.
+	// Statement implementations should embed it in.
+	return ""
 }
 
-// stmtNode implements StmtNode interface.
-// Statement implementations should embed it in.
 type stmtNode struct {
 	node
 }
 
 // statement implements StmtNode interface.
-func (sn *stmtNode) statement() {}
+func (sn *stmtNode) statement() {
+	_ = "STUB: not implemented"
 
-// ddlNode implements DDLNode interface.
-// DDL implementations should embed it in.
+	// ddlNode implements DDLNode interface.
+	// DDL implementations should embed it in.
+	return
+}
+
 type ddlNode struct {
 	stmtNode
 }
 
 // ddlStatement implements DDLNode interface.
-func (dn *ddlNode) ddlStatement() {}
+func (dn *ddlNode) ddlStatement() {
+	_ = "STUB: not implemented"
 
-// dmlNode is the struct implements DMLNode interface.
-// DML implementations should embed it in.
+	// dmlNode is the struct implements DMLNode interface.
+	// DML implementations should embed it in.
+	return
+}
+
 type dmlNode struct {
 	stmtNode
 }
 
 // dmlStatement implements DMLNode interface.
-func (dn *dmlNode) dmlStatement() {}
+func (dn *dmlNode) dmlStatement() {
+	_ = "STUB: not implemented"
 
-// exprNode is the struct implements Expression interface.
-// Expression implementations should embed it in.
+	// exprNode is the struct implements Expression interface.
+	// Expression implementations should embed it in.
+	return
+}
+
 type exprNode struct {
 	node
 	Type types.FieldType
@@ -84,27 +104,31 @@ type TexprNode = exprNode
 
 // SetType implements ExprNode interface.
 func (en *exprNode) SetType(tp *types.FieldType) {
-	en.Type = *tp
+	_ = "STUB: not implemented"
+
+	// GetType implements ExprNode interface.
+	return
 }
 
-// GetType implements ExprNode interface.
 func (en *exprNode) GetType() *types.FieldType {
-	return &en.Type
+	_ = "STUB: not implemented"
+
+	// SetFlag implements ExprNode interface.
+	return nil
 }
 
-// SetFlag implements ExprNode interface.
 func (en *exprNode) SetFlag(flag uint64) {
-	en.flag = flag
+	_ = "STUB: not implemented"
+
+	// GetFlag implements ExprNode interface.
+	return
 }
 
-// GetFlag implements ExprNode interface.
-func (en *exprNode) GetFlag() uint64 {
-	return en.flag
-}
+func (en *exprNode) GetFlag() uint64 { _ = "STUB: not implemented"; return 0 }
 
 type funcNode struct {
 	exprNode
 }
 
 // functionExpression implements FunctionNode interface.
-func (fn *funcNode) functionExpression() {}
+func (fn *funcNode) functionExpression() { _ = "STUB: not implemented"; return }

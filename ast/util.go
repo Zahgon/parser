@@ -21,44 +21,7 @@ const (
 )
 
 // IsReadOnly checks whether the input ast is readOnly.
-func IsReadOnly(node Node) bool {
-	switch st := node.(type) {
-	case *SelectStmt:
-		if st.LockInfo != nil {
-			switch st.LockInfo.LockType {
-			case SelectLockForUpdate, SelectLockForUpdateNoWait, SelectLockForUpdateWaitN:
-				return false
-			}
-		}
-
-		checker := readOnlyChecker{
-			readOnly: true,
-		}
-
-		node.Accept(&checker)
-		return checker.readOnly
-	case *ExplainStmt:
-		return !st.Analyze || IsReadOnly(st.Stmt)
-	case *DoStmt, *ShowStmt:
-		return true
-	case *SetOprStmt:
-		for _, sel := range node.(*SetOprStmt).SelectList.Selects {
-			if !IsReadOnly(sel) {
-				return false
-			}
-		}
-		return true
-	case *SetOprSelectList:
-		for _, sel := range node.(*SetOprSelectList).Selects {
-			if !IsReadOnly(sel) {
-				return false
-			}
-		}
-		return true
-	default:
-		return false
-	}
-}
+func IsReadOnly(node Node) bool { _ = "STUB: not implemented"; return false }
 
 // readOnlyChecker checks whether a query's ast is readonly, if it satisfied
 // 1. selectstmt;
@@ -70,18 +33,14 @@ type readOnlyChecker struct {
 
 // Enter implements Visitor interface.
 func (checker *readOnlyChecker) Enter(in Node) (out Node, skipChildren bool) {
-	switch node := in.(type) {
-	case *VariableExpr:
-		// like func rewriteVariable(), this stands for SetVar.
-		if !node.IsSystem && node.Value != nil {
-			checker.readOnly = false
-			return in, true
-		}
-	}
-	return in, false
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
+
+// like func rewriteVariable(), this stands for SetVar.
 
 // Leave implements Visitor interface.
 func (checker *readOnlyChecker) Leave(in Node) (out Node, ok bool) {
-	return in, checker.readOnly
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }

@@ -14,10 +14,6 @@
 package charset
 
 import (
-	"sort"
-	"strings"
-
-	"github.com/pingcap/errors"
 	"github.com/pingcap/parser/mysql"
 	"github.com/pingcap/parser/terror"
 )
@@ -69,110 +65,52 @@ var supportedCollationNames = map[string]struct{}{
 }
 
 // GetSupportedCharsets gets descriptions for all charsets supported so far.
-func GetSupportedCharsets() []*Charset {
-	charsets := make([]*Charset, 0, len(charsetInfos))
-	for _, ch := range charsetInfos {
-		charsets = append(charsets, ch)
-	}
+func GetSupportedCharsets() []*Charset { _ = "STUB: not implemented"; return nil }
 
-	// sort charset by name.
-	sort.Slice(charsets, func(i, j int) bool {
-		return charsets[i].Name < charsets[j].Name
-	})
-	return charsets
-}
+// sort charset by name.
 
 // GetSupportedCollations gets information for all collations supported so far.
-func GetSupportedCollations() []*Collation {
-	return supportedCollations
-}
+func GetSupportedCollations() []*Collation { _ = "STUB: not implemented"; return nil }
 
 // ValidCharsetAndCollation checks the charset and the collation validity
 // and returns a boolean.
 func ValidCharsetAndCollation(cs string, co string) bool {
+	_ = "STUB: not implemented"
 	// We will use utf8 as a default charset.
-	if cs == "" {
-		cs = "utf8"
-	}
-	chs, err := GetCharsetInfo(cs)
-	if err != nil {
-		return false
-	}
-
-	if co == "" {
-		return true
-	}
-	co = strings.ToLower(co)
-	_, ok := chs.Collations[co]
-	return ok
+	return false
 }
 
 // GetDefaultCollationLegacy is compatible with the charset support in old version parser.
 func GetDefaultCollationLegacy(charset string) (string, error) {
-	switch strings.ToLower(charset) {
-	case CharsetUTF8, CharsetUTF8MB4, CharsetASCII, CharsetLatin1, CharsetBin:
-		return GetDefaultCollation(charset)
-	default:
-		return "", errors.Errorf("Unknown charset %s", charset)
-	}
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // GetDefaultCollation returns the default collation for charset.
-func GetDefaultCollation(charset string) (string, error) {
-	cs, err := GetCharsetInfo(charset)
-	if err != nil {
-		return "", err
-	}
-	return cs.DefaultCollation, nil
-}
+func GetDefaultCollation(charset string) (string, error) { _ = "STUB: not implemented"; return "", nil }
 
 // GetDefaultCharsetAndCollate returns the default charset and collation.
-func GetDefaultCharsetAndCollate() (string, string) {
-	return mysql.DefaultCharset, mysql.DefaultCollationName
-}
+func GetDefaultCharsetAndCollate() (string, string) { _ = "STUB: not implemented"; return "", "" }
 
 // GetCharsetInfo returns charset and collation for cs as name.
-func GetCharsetInfo(cs string) (*Charset, error) {
-	if c, ok := charsetInfos[strings.ToLower(cs)]; ok {
-		return c, nil
-	}
-
-	return nil, errors.Errorf("Unknown charset %s", cs)
-}
+func GetCharsetInfo(cs string) (*Charset, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // GetCharsetInfoByID returns charset and collation for id as cs_number.
 func GetCharsetInfoByID(coID int) (string, string, error) {
-	if coID == mysql.DefaultCollationID {
-		return mysql.DefaultCharset, mysql.DefaultCollationName, nil
-	}
-	if collation, ok := collationsIDMap[coID]; ok {
-		return collation.CharsetName, collation.Name, nil
-	}
-	return "", "", errors.Errorf("Unknown charset id %d", coID)
+	_ = "STUB: not implemented"
+	return "", "", nil
 }
 
 // GetCollations returns a list for all collations.
-func GetCollations() []*Collation {
-	return collations
-}
+func GetCollations() []*Collation { _ = "STUB: not implemented"; return nil }
 
 func GetCollationByName(name string) (*Collation, error) {
-	collation, ok := collationsNameMap[strings.ToLower(name)]
-	if !ok {
-		return nil, ErrUnknownCollation.GenWithStackByArgs(name)
-	}
-	return collation, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GetCollationByID returns collations by given id.
-func GetCollationByID(id int) (*Collation, error) {
-	collation, ok := collationsIDMap[id]
-	if !ok {
-		return nil, errors.Errorf("Unknown collation id %d", id)
-	}
-
-	return collation, nil
-}
+func GetCollationByID(id int) (*Collation, error) { _ = "STUB: not implemented"; return nil, nil }
 
 const (
 	// CharsetBin is used for marking binary charset.
@@ -463,30 +401,15 @@ var collations = []*Collation{
 
 // AddCharset adds a new charset.
 // Use only when adding a custom charset to the parser.
-func AddCharset(c *Charset) {
-	charsetInfos[c.Name] = c
-}
+func AddCharset(c *Charset) { _ = "STUB: not implemented"; return }
 
 // RemoveCharset remove a charset.
 // Use only when adding a custom charset to the parser.
-func RemoveCharset(c string) {
-	delete(charsetInfos, c)
-}
+func RemoveCharset(c string) { _ = "STUB: not implemented"; return }
 
 // AddCollation adds a new collation.
 // Use only when adding a custom collation to the parser.
-func AddCollation(c *Collation) {
-	collationsIDMap[c.ID] = c
-	collationsNameMap[c.Name] = c
-
-	if _, ok := supportedCollationNames[c.Name]; ok {
-		supportedCollations = append(supportedCollations, c)
-	}
-
-	if charset, ok := charsetInfos[c.CharsetName]; ok {
-		charset.Collations[c.Name] = c
-	}
-}
+func AddCollation(c *Collation) { _ = "STUB: not implemented"; return }
 
 // init method always puts to the end of file.
 func init() {

@@ -15,15 +15,11 @@ package mysql
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/pingcap/errors"
 	"github.com/pingcap/parser/format"
 )
 
-func newInvalidModeErr(s string) error {
-	return NewErr(ErrWrongValueForVar, "sql_mode", s)
-}
+func newInvalidModeErr(s string) error { _ = "STUB: not implemented"; return nil }
 
 // Version information.
 var (
@@ -62,9 +58,7 @@ const (
 )
 
 // HasCursorExistsFlag return true if cursor exists indicated by server status.
-func HasCursorExistsFlag(serverStatus uint16) bool {
-	return serverStatus&ServerStatusCursorExists > 0
-}
+func HasCursorExistsFlag(serverStatus uint16) bool { _ = "STUB: not implemented"; return false }
 
 // Identifier length limitations.
 // See https://dev.mysql.com/doc/refman/5.7/en/identifiers.html
@@ -312,79 +306,49 @@ var DefaultLengthOfTimeFraction = map[int]int{
 type SQLMode int
 
 // HasNoZeroDateMode detects if 'NO_ZERO_DATE' mode is set in SQLMode
-func (m SQLMode) HasNoZeroDateMode() bool {
-	return m&ModeNoZeroDate == ModeNoZeroDate
-}
+func (m SQLMode) HasNoZeroDateMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasNoZeroInDateMode detects if 'NO_ZERO_IN_DATE' mode is set in SQLMode
-func (m SQLMode) HasNoZeroInDateMode() bool {
-	return m&ModeNoZeroInDate == ModeNoZeroInDate
-}
+func (m SQLMode) HasNoZeroInDateMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasErrorForDivisionByZeroMode detects if 'ERROR_FOR_DIVISION_BY_ZERO' mode is set in SQLMode
-func (m SQLMode) HasErrorForDivisionByZeroMode() bool {
-	return m&ModeErrorForDivisionByZero == ModeErrorForDivisionByZero
-}
+func (m SQLMode) HasErrorForDivisionByZeroMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasOnlyFullGroupBy detects if 'ONLY_FULL_GROUP_BY' mode is set in SQLMode
-func (m SQLMode) HasOnlyFullGroupBy() bool {
-	return m&ModeOnlyFullGroupBy == ModeOnlyFullGroupBy
-}
+func (m SQLMode) HasOnlyFullGroupBy() bool { _ = "STUB: not implemented"; return false }
 
 // HasStrictMode detects if 'STRICT_TRANS_TABLES' or 'STRICT_ALL_TABLES' mode is set in SQLMode
-func (m SQLMode) HasStrictMode() bool {
-	return m&ModeStrictTransTables == ModeStrictTransTables || m&ModeStrictAllTables == ModeStrictAllTables
-}
+func (m SQLMode) HasStrictMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasPipesAsConcatMode detects if 'PIPES_AS_CONCAT' mode is set in SQLMode
-func (m SQLMode) HasPipesAsConcatMode() bool {
-	return m&ModePipesAsConcat == ModePipesAsConcat
-}
+func (m SQLMode) HasPipesAsConcatMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasNoUnsignedSubtractionMode detects if 'NO_UNSIGNED_SUBTRACTION' mode is set in SQLMode
-func (m SQLMode) HasNoUnsignedSubtractionMode() bool {
-	return m&ModeNoUnsignedSubtraction == ModeNoUnsignedSubtraction
-}
+func (m SQLMode) HasNoUnsignedSubtractionMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasHighNotPrecedenceMode detects if 'HIGH_NOT_PRECEDENCE' mode is set in SQLMode
-func (m SQLMode) HasHighNotPrecedenceMode() bool {
-	return m&ModeHighNotPrecedence == ModeHighNotPrecedence
-}
+func (m SQLMode) HasHighNotPrecedenceMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasANSIQuotesMode detects if 'ANSI_QUOTES' mode is set in SQLMode
-func (m SQLMode) HasANSIQuotesMode() bool {
-	return m&ModeANSIQuotes == ModeANSIQuotes
-}
+func (m SQLMode) HasANSIQuotesMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasRealAsFloatMode detects if 'REAL_AS_FLOAT' mode is set in SQLMode
-func (m SQLMode) HasRealAsFloatMode() bool {
-	return m&ModeRealAsFloat == ModeRealAsFloat
-}
+func (m SQLMode) HasRealAsFloatMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasPadCharToFullLengthMode detects if 'PAD_CHAR_TO_FULL_LENGTH' mode is set in SQLMode
-func (m SQLMode) HasPadCharToFullLengthMode() bool {
-	return m&ModePadCharToFullLength == ModePadCharToFullLength
-}
+func (m SQLMode) HasPadCharToFullLengthMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasNoBackslashEscapesMode detects if 'NO_BACKSLASH_ESCAPES' mode is set in SQLMode
-func (m SQLMode) HasNoBackslashEscapesMode() bool {
-	return m&ModeNoBackslashEscapes == ModeNoBackslashEscapes
-}
+func (m SQLMode) HasNoBackslashEscapesMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasIgnoreSpaceMode detects if 'IGNORE_SPACE' mode is set in SQLMode
-func (m SQLMode) HasIgnoreSpaceMode() bool {
-	return m&ModeIgnoreSpace == ModeIgnoreSpace
-}
+func (m SQLMode) HasIgnoreSpaceMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasNoAutoCreateUserMode detects if 'NO_AUTO_CREATE_USER' mode is set in SQLMode
-func (m SQLMode) HasNoAutoCreateUserMode() bool {
-	return m&ModeNoAutoCreateUser == ModeNoAutoCreateUser
-}
+func (m SQLMode) HasNoAutoCreateUserMode() bool { _ = "STUB: not implemented"; return false }
 
 // HasAllowInvalidDatesMode detects if 'ALLOW_INVALID_DATES' mode is set in SQLMode
-func (m SQLMode) HasAllowInvalidDatesMode() bool {
-	return m&ModeAllowInvalidDates == ModeAllowInvalidDates
-}
+func (m SQLMode) HasAllowInvalidDatesMode() bool { _ = "STUB: not implemented"; return false }
 
 // consts for sql modes.
 // see https://dev.mysql.com/doc/internals/en/query-event.html#q-sql-mode-code
@@ -426,45 +390,11 @@ const (
 )
 
 // FormatSQLModeStr re-format 'SQL_MODE' variable.
-func FormatSQLModeStr(s string) string {
-	s = strings.ToUpper(strings.TrimRight(s, " "))
-	parts := strings.Split(s, ",")
-	var nonEmptyParts []string
-	existParts := make(map[string]string)
-	for _, part := range parts {
-		if len(part) == 0 {
-			continue
-		}
-		if modeParts, ok := CombinationSQLMode[part]; ok {
-			for _, modePart := range modeParts {
-				if _, exist := existParts[modePart]; !exist {
-					nonEmptyParts = append(nonEmptyParts, modePart)
-					existParts[modePart] = modePart
-				}
-			}
-		}
-		if _, exist := existParts[part]; !exist {
-			nonEmptyParts = append(nonEmptyParts, part)
-			existParts[part] = part
-		}
-	}
-	return strings.Join(nonEmptyParts, ",")
-}
+func FormatSQLModeStr(s string) string { _ = "STUB: not implemented"; return "" }
 
 // GetSQLMode gets the sql mode for string literal. SQL_mode is a list of different modes separated by commas.
 // The input string must be formatted by 'FormatSQLModeStr'
-func GetSQLMode(s string) (SQLMode, error) {
-	strs := strings.Split(s, ",")
-	var sqlMode SQLMode
-	for i, length := 0, len(strs); i < length; i++ {
-		mode, ok := Str2SQLMode[strs[i]]
-		if !ok && strs[i] != "" {
-			return sqlMode, newInvalidModeErr(strs[i])
-		}
-		sqlMode = sqlMode | mode
-	}
-	return sqlMode, nil
-}
+func GetSQLMode(s string) (SQLMode, error) { _ = "STUB: not implemented"; return *new(SQLMode), nil }
 
 // Str2SQLMode is the string represent of sql_mode to sql_mode map.
 var Str2SQLMode = map[string]SQLMode{
@@ -522,11 +452,8 @@ type FormatFunc func(string, string) (string, error)
 
 // GetLocaleFormatFunction get the format function for sepcific locale.
 func GetLocaleFormatFunction(loc string) FormatFunc {
-	locale, exist := locale2FormatFunction[loc]
-	if !exist {
-		return formatNotSupport
-	}
-	return locale
+	_ = "STUB: not implemented"
+	return *new(FormatFunc)
 }
 
 // locale2FormatFunction is the string represent of locale format function.
@@ -556,38 +483,10 @@ var Priority2Str = map[PriorityEnum]string{
 }
 
 // Str2Priority is used to convert a string to a priority.
-func Str2Priority(val string) PriorityEnum {
-	val = strings.ToUpper(val)
-	switch val {
-	case "NO_PRIORITY":
-		return NoPriority
-	case "HIGH_PRIORITY":
-		return HighPriority
-	case "LOW_PRIORITY":
-		return LowPriority
-	case "DELAYED":
-		return DelayedPriority
-	default:
-		return NoPriority
-	}
-}
+func Str2Priority(val string) PriorityEnum { _ = "STUB: not implemented"; return *new(PriorityEnum) }
 
 // Restore implements Node interface.
-func (n *PriorityEnum) Restore(ctx *format.RestoreCtx) error {
-	switch *n {
-	case NoPriority:
-		return nil
-	case LowPriority:
-		ctx.WriteKeyWord("LOW_PRIORITY")
-	case HighPriority:
-		ctx.WriteKeyWord("HIGH_PRIORITY")
-	case DelayedPriority:
-		ctx.WriteKeyWord("DELAYED")
-	default:
-		return errors.Errorf("undefined PriorityEnum Type[%d]", *n)
-	}
-	return nil
-}
+func (n *PriorityEnum) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // PrimaryKeyName defines primary key name.
 const (

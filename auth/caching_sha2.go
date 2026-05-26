@@ -31,190 +31,52 @@ package auth
 // - salt+hash
 //
 
-import (
-	"bytes"
-	"crypto/rand"
-	"crypto/sha256"
-	"errors"
-	"fmt"
-	"strconv"
-)
-
 const (
 	MIXCHARS             = 32
 	SALT_LENGTH          = 20
 	ITERATION_MULTIPLIER = 1000
 )
 
-func b64From24bit(b []byte, n int) []byte {
-	b64t := []byte("./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
-
-	w := (int64(b[0]) << 16) | (int64(b[1]) << 8) | int64(b[2])
-	ret := make([]byte, 0, n)
-	for n > 0 {
-		n--
-		ret = append(ret, b64t[w&0x3f])
-		w >>= 6
-	}
-
-	return ret
-}
+func b64From24bit(b []byte, n int) []byte { _ = "STUB: not implemented"; return nil }
 
 func sha256crypt(plaintext string, salt []byte, iterations int) string {
+	_ = "STUB: not implemented"
 	// Numbers in the comments refer to the description of the algorithm on https://www.akkadia.org/drepper/SHA-crypt.txt
-
-	// 1, 2, 3
-	tmpA := sha256.New()
-	tmpA.Write([]byte(plaintext))
-	tmpA.Write(salt)
-
-	// 4, 5, 6, 7, 8
-	tmpB := sha256.New()
-	tmpB.Write([]byte(plaintext))
-	tmpB.Write(salt)
-	tmpB.Write([]byte(plaintext))
-	sumB := tmpB.Sum(nil)
-
-	// 9, 10
-	var i int
-	for i = len(plaintext); i > MIXCHARS; i -= MIXCHARS {
-		tmpA.Write(sumB[:MIXCHARS])
-	}
-	tmpA.Write(sumB[:i])
-
-	// 11
-	for i = len(plaintext); i > 0; i >>= 1 {
-		if i%2 == 0 {
-			tmpA.Write([]byte(plaintext))
-		} else {
-			tmpA.Write(sumB)
-		}
-	}
-
-	// 12
-	sumA := tmpA.Sum(nil)
-
-	// 13, 14, 15
-	tmpDP := sha256.New()
-	for range []byte(plaintext) {
-		tmpDP.Write([]byte(plaintext))
-	}
-	sumDP := tmpDP.Sum(nil)
-
-	// 16
-	p := make([]byte, 0, sha256.Size)
-	for i = len(plaintext); i > 0; i -= MIXCHARS {
-		if i > MIXCHARS {
-			p = append(p, sumDP...)
-		} else {
-			p = append(p, sumDP[0:i]...)
-		}
-	}
-
-	// 17, 18, 19
-	tmpDS := sha256.New()
-	for i = 0; i < 16+int(sumA[0]); i++ {
-		tmpDS.Write(salt)
-	}
-	sumDS := tmpDS.Sum(nil)
-
-	// 20
-	s := []byte{}
-	for i = len(salt); i > 0; i -= MIXCHARS {
-		if i > MIXCHARS {
-			s = append(s, sumDS...)
-		} else {
-			s = append(s, sumDS[0:i]...)
-		}
-	}
-
-	// 21
-	tmpC := sha256.New()
-	var sumC []byte
-	for i = 0; i < iterations; i++ {
-		tmpC.Reset()
-
-		if i&1 != 0 {
-			tmpC.Write(p)
-		} else {
-			tmpC.Write(sumA)
-		}
-		if i%3 != 0 {
-			tmpC.Write(s)
-		}
-		if i%7 != 0 {
-			tmpC.Write(p)
-		}
-		if i&1 != 0 {
-			tmpC.Write(sumA)
-		} else {
-			tmpC.Write(p)
-		}
-		sumC = tmpC.Sum(nil)
-		copy(sumA, tmpC.Sum(nil))
-	}
-
-	// 22
-	buf := bytes.Buffer{}
-	buf.Grow(100) // FIXME
-	buf.Write([]byte{'$', 'A', '$'})
-	rounds := fmt.Sprintf("%03d", iterations/ITERATION_MULTIPLIER)
-	buf.Write([]byte(rounds))
-	buf.Write([]byte{'$'})
-	buf.Write(salt)
-
-	buf.Write(b64From24bit([]byte{sumC[0], sumC[10], sumC[20]}, 4))
-	buf.Write(b64From24bit([]byte{sumC[21], sumC[1], sumC[11]}, 4))
-	buf.Write(b64From24bit([]byte{sumC[12], sumC[22], sumC[2]}, 4))
-	buf.Write(b64From24bit([]byte{sumC[3], sumC[13], sumC[23]}, 4))
-	buf.Write(b64From24bit([]byte{sumC[24], sumC[4], sumC[14]}, 4))
-	buf.Write(b64From24bit([]byte{sumC[15], sumC[25], sumC[5]}, 4))
-	buf.Write(b64From24bit([]byte{sumC[6], sumC[16], sumC[26]}, 4))
-	buf.Write(b64From24bit([]byte{sumC[27], sumC[7], sumC[17]}, 4))
-	buf.Write(b64From24bit([]byte{sumC[18], sumC[28], sumC[8]}, 4))
-	buf.Write(b64From24bit([]byte{sumC[9], sumC[19], sumC[29]}, 4))
-	buf.Write(b64From24bit([]byte{0, sumC[31], sumC[30]}, 3))
-
-	return buf.String()
+	return ""
 }
+
+// 1, 2, 3
+
+// 4, 5, 6, 7, 8
+
+// 9, 10
+
+// 11
+
+// 12
+
+// 13, 14, 15
+
+// 16
+
+// 17, 18, 19
+
+// 20
+
+// 21
+
+// 22
+
+// FIXME
 
 // Checks if a MySQL style caching_sha2 authentication string matches a password
 func CheckShaPassword(pwhash []byte, password string) (bool, error) {
-	pwhash_parts := bytes.Split(pwhash, []byte("$"))
-	if len(pwhash_parts) != 4 {
-		return false, errors.New("failed to decode hash parts")
-	}
-
-	hash_type := string(pwhash_parts[1])
-	if hash_type != "A" {
-		return false, errors.New("digest type is incompatible")
-	}
-
-	iterations, err := strconv.Atoi(string(pwhash_parts[2]))
-	if err != nil {
-		return false, errors.New("failed to decode iterations")
-	}
-	iterations = iterations * ITERATION_MULTIPLIER
-	salt := pwhash_parts[3][:SALT_LENGTH]
-
-	newHash := sha256crypt(password, salt, iterations)
-
-	return bytes.Equal(pwhash, []byte(newHash)), nil
+	_ = "STUB: not implemented"
+	return false, nil
 }
 
-func NewSha2Password(pwd string) string {
-	salt := make([]byte, SALT_LENGTH)
-	rand.Read(salt)
+func NewSha2Password(pwd string) string { _ = "STUB: not implemented"; return "" }
 
-	// Restrict to 7-bit to avoid multi-byte UTF-8
-	for i := range salt {
-		salt[i] = salt[i] &^ 128
-		for salt[i] == 36 || salt[i] == 0 { // '$' or NUL
-			newval := make([]byte, 1)
-			rand.Read(newval)
-			salt[i] = newval[0] &^ 128
-		}
-	}
+// Restrict to 7-bit to avoid multi-byte UTF-8
 
-	return sha256crypt(pwd, salt, 5*ITERATION_MULTIPLIER)
-}
+// '$' or NUL

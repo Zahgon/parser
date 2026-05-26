@@ -11,7 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//+build !codes
+//go:build !codes
+// +build !codes
 
 package test_driver
 
@@ -19,29 +20,15 @@ import (
 	"math"
 )
 
-func isSpace(c byte) bool {
-	return c == ' ' || c == '\t'
-}
+func isSpace(c byte) bool { _ = "STUB: not implemented"; return false }
 
-func isDigit(c byte) bool {
-	return c >= '0' && c <= '9'
-}
+func isDigit(c byte) bool { _ = "STUB: not implemented"; return false }
 
-func myMin(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
+func myMin(a, b int) int { _ = "STUB: not implemented"; return 0 }
 
-func pow10(x int) int32 {
-	return int32(math.Pow10(x))
-}
+func pow10(x int) int32 { _ = "STUB: not implemented"; return 0 }
 
-func Abs(n int64) int64 {
-	y := n >> 63
-	return (n ^ y) - y
-}
+func Abs(n int64) int64 { _ = "STUB: not implemented"; return 0 }
 
 // uintSizeTable is used as a table to do comparison to get uint length is faster than doing loop on division with 10
 var uintSizeTable = [21]uint64{
@@ -54,19 +41,9 @@ var uintSizeTable = [21]uint64{
 } // math.MaxUint64 is 18446744073709551615 and it has 20 digits
 
 // StrLenOfUint64Fast efficiently calculate the string character lengths of an uint64 as input
-func StrLenOfUint64Fast(x uint64) int {
-	for i := 1; ; i++ {
-		if x <= uintSizeTable[i] {
-			return i
-		}
-	}
-}
+func StrLenOfUint64Fast(x uint64) int { _ = "STUB: not implemented"; return 0 }
 
 // StrLenOfInt64Fast efficiently calculate the string character lengths of an int64 as input
-func StrLenOfInt64Fast(x int64) int {
-	size := 0
-	if x < 0 {
-		size = 1 // add "-" sign on the length count
-	}
-	return size + StrLenOfUint64Fast(uint64(Abs(x)))
-}
+func StrLenOfInt64Fast(x int64) int { _ = "STUB: not implemented"; return 0 }
+
+// add "-" sign on the length count

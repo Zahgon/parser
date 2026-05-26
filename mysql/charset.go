@@ -17,21 +17,10 @@ import "unicode"
 
 // CharsetNameToID maps charset name to its default collation ID.
 func CharsetNameToID(charset string) uint8 {
+	_ = "STUB: not implemented"
 	// Use quick path for TiDB to avoid access CharsetIDs map
 	// "SHOW CHARACTER SET;" to see all the supported character sets.
-	if charset == "utf8mb4" {
-		return UTF8MB4DefaultCollationID
-	} else if charset == "binary" {
-		return BinaryDefaultCollationID
-	} else if charset == "utf8" {
-		return UTF8DefaultCollationID
-	} else if charset == "ascii" {
-		return ASCIIDefaultCollationID
-	} else if charset == "latin1" {
-		return Latin1DefaultCollationID
-	} else {
-		return CharsetIDs[charset]
-	}
+	return 0
 }
 
 // CharsetIDs maps charset name to its default collation ID.
@@ -593,9 +582,7 @@ const (
 )
 
 // IsUTF8Charset checks if charset is utf8 or utf8mb4
-func IsUTF8Charset(charset string) bool {
-	return charset == UTF8Charset || charset == UTF8MB4Charset
-}
+func IsUTF8Charset(charset string) bool { _ = "STUB: not implemented"; return false }
 
 // RangeGraph defines valid unicode characters to use in column names. It strictly follows MySQL's definition.
 // See #3994.

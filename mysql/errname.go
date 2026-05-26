@@ -19,9 +19,7 @@ type ErrMessage struct {
 }
 
 // Message creates a error message with the format specifier.
-func Message(message string, redactArgs []int) *ErrMessage {
-	return &ErrMessage{Raw: message, RedactArgPos: redactArgs}
-}
+func Message(message string, redactArgs []int) *ErrMessage { _ = "STUB: not implemented"; return nil }
 
 // MySQLErrName maps error code to MySQL error messages.
 var MySQLErrName = map[uint16]*ErrMessage{

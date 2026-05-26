@@ -14,11 +14,6 @@
 package charset
 
 import (
-	"bytes"
-	"fmt"
-	"strings"
-
-	"github.com/cznic/mathutil"
 	"github.com/pingcap/parser/mysql"
 	"github.com/pingcap/parser/terror"
 	"golang.org/x/text/encoding"
@@ -32,14 +27,10 @@ var errInvalidCharacterString = terror.ClassParser.NewStd(mysql.ErrInvalidCharac
 type EncodingLabel string
 
 // Format trim and change the label to lowercase.
-func Format(label string) EncodingLabel {
-	return EncodingLabel(strings.ToLower(strings.Trim(label, "\t\n\r\f ")))
-}
+func Format(label string) EncodingLabel { _ = "STUB: not implemented"; return *new(EncodingLabel) }
 
 // Formatted is used when the label is already trimmed and it is lowercase.
-func Formatted(label string) EncodingLabel {
-	return EncodingLabel(label)
-}
+func Formatted(label string) EncodingLabel { _ = "STUB: not implemented"; return *new(EncodingLabel) }
 
 // Encoding provide a interface to encode/decode a string with specific encoding.
 type Encoding struct {
@@ -49,105 +40,56 @@ type Encoding struct {
 }
 
 // Enabled indicates whether the non-utf8 encoding is used.
-func (e *Encoding) Enabled() bool {
-	return e.enc != nil && e.charLength != nil
-}
+func (e *Encoding) Enabled() bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the name of the current encoding.
 func (e *Encoding) Name() string {
-	return e.name
+	_ = "STUB: not implemented"
+
+	// NewEncoding creates a new Encoding.
+	return ""
 }
 
-// NewEncoding creates a new Encoding.
-func NewEncoding(label string) *Encoding {
-	if len(label) == 0 {
-		return &Encoding{}
-	}
-	e, name := Lookup(label)
-	if e != nil && name != encodingLegacy {
-		return &Encoding{
-			enc:        e,
-			name:       name,
-			charLength: FindNextCharacterLength(name),
-		}
-	}
-	return &Encoding{name: name}
-}
+func NewEncoding(label string) *Encoding { _ = "STUB: not implemented"; return nil }
 
 // UpdateEncoding updates to a new Encoding.
-func (e *Encoding) UpdateEncoding(label EncodingLabel) {
-	enc, name := lookup(label)
-	e.name = name
-	if enc != nil && name != encodingLegacy {
-		e.enc = enc
-		e.charLength = FindNextCharacterLength(name)
-	} else {
-		e.enc = nil
-		e.charLength = nil
-	}
-}
+func (e *Encoding) UpdateEncoding(label EncodingLabel) { _ = "STUB: not implemented"; return }
 
 // Encode convert bytes from utf-8 charset to a specific charset.
 func (e *Encoding) Encode(dest, src []byte) ([]byte, error) {
-	return e.transform(e.enc.NewEncoder(), dest, src, false)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Decode convert bytes from a specific charset to utf-8 charset.
 func (e *Encoding) Decode(dest, src []byte) ([]byte, error) {
-	return e.transform(e.enc.NewDecoder(), dest, src, true)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (e *Encoding) transform(transformer transform.Transformer, dest, src []byte, isDecoding bool) ([]byte, error) {
-	if len(dest) < len(src) {
-		dest = make([]byte, len(src)*2)
-	}
-	var destOffset, srcOffset int
-	var encodingErr error
-	for {
-		srcNextLen := e.nextCharLenInSrc(src[srcOffset:], isDecoding)
-		srcEnd := mathutil.Min(srcOffset+srcNextLen, len(src))
-		nDest, nSrc, err := transformer.Transform(dest[destOffset:], src[srcOffset:srcEnd], false)
-		if err == transform.ErrShortDst {
-			dest = enlargeCapacity(dest)
-		} else if err != nil || isDecoding && beginWithReplacementChar(dest[destOffset:destOffset+nDest]) {
-			if encodingErr == nil {
-				encodingErr = e.generateErr(src[srcOffset:], srcNextLen)
-			}
-			dest[destOffset] = byte('?')
-			nDest, nSrc = 1, srcNextLen // skip the source bytes that cannot be decoded normally.
-		}
-		destOffset += nDest
-		srcOffset += nSrc
-		// The source bytes are exhausted.
-		if srcOffset >= len(src) {
-			return dest[:destOffset], encodingErr
-		}
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// skip the source bytes that cannot be decoded normally.
+
+// The source bytes are exhausted.
 
 func (e *Encoding) nextCharLenInSrc(srcRest []byte, isDecoding bool) int {
-	if isDecoding && e.charLength != nil {
-		return e.charLength(srcRest)
-	}
-	return len(srcRest)
+	_ = "STUB: not implemented"
+	return 0
 }
 
-func enlargeCapacity(dest []byte) []byte {
-	newDest := make([]byte, len(dest)*2)
-	copy(newDest, dest)
-	return newDest
-}
+func enlargeCapacity(dest []byte) []byte { _ = "STUB: not implemented"; return nil }
 
 func (e *Encoding) generateErr(srcRest []byte, srcNextLen int) error {
-	cutEnd := mathutil.Min(srcNextLen, len(srcRest))
-	invalidBytes := fmt.Sprintf("%X", string(srcRest[:cutEnd]))
-	return errInvalidCharacterString.GenWithStackByArgs(e.name, invalidBytes)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // replacementBytes are bytes for the replacement rune 0xfffd.
 var replacementBytes = []byte{0xEF, 0xBF, 0xBD}
 
 // beginWithReplacementChar check if dst has the prefix '0xEFBFBD'.
-func beginWithReplacementChar(dst []byte) bool {
-	return bytes.HasPrefix(dst, replacementBytes)
-}
+func beginWithReplacementChar(dst []byte) bool { _ = "STUB: not implemented"; return false }

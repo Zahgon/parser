@@ -221,26 +221,16 @@ var ops = [...]struct {
 
 // String implements Stringer interface.
 func (o Op) String() string {
-	return ops[o].name
+	_ = "STUB: not implemented"
+
+	// Format the ExprNode into a Writer.
+	return ""
 }
 
-// Format the ExprNode into a Writer.
-func (o Op) Format(w io.Writer) {
-	io.WriteString(w, ops[o].literal)
-}
+func (o Op) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // IsKeyword returns whether the operator is a keyword.
-func (o Op) IsKeyword() bool {
-	return ops[o].isKeyword
-}
+func (o Op) IsKeyword() bool { _ = "STUB: not implemented"; return false }
 
 // Restore the Op into a Writer
-func (o Op) Restore(ctx *format.RestoreCtx) error {
-	info := &ops[o]
-	if info.isKeyword {
-		ctx.WriteKeyWord(info.literal)
-	} else {
-		ctx.WritePlain(info.literal)
-	}
-	return nil
-}
+func (o Op) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }

@@ -11,19 +11,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//+build !codes
+//go:build !codes
+// +build !codes
 
 package test_driver
 
 import (
-	"fmt"
 	"io"
-	"strconv"
 
 	"github.com/pingcap/parser/ast"
-	"github.com/pingcap/parser/charset"
 	"github.com/pingcap/parser/format"
-	"github.com/pingcap/parser/mysql"
 )
 
 func init() {
@@ -57,132 +54,32 @@ type ValueExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *ValueExpr) Restore(ctx *format.RestoreCtx) error {
-	switch n.Kind() {
-	case KindNull:
-		ctx.WriteKeyWord("NULL")
-	case KindInt64:
-		if n.Type.Flag&mysql.IsBooleanFlag != 0 {
-			if n.GetInt64() > 0 {
-				ctx.WriteKeyWord("TRUE")
-			} else {
-				ctx.WriteKeyWord("FALSE")
-			}
-		} else {
-			ctx.WritePlain(strconv.FormatInt(n.GetInt64(), 10))
-		}
-	case KindUint64:
-		ctx.WritePlain(strconv.FormatUint(n.GetUint64(), 10))
-	case KindFloat32:
-		ctx.WritePlain(strconv.FormatFloat(n.GetFloat64(), 'e', -1, 32))
-	case KindFloat64:
-		ctx.WritePlain(strconv.FormatFloat(n.GetFloat64(), 'e', -1, 64))
-	case KindString:
-		if n.Type.Charset != "" {
-			ctx.WritePlain("_")
-			ctx.WriteKeyWord(n.Type.Charset)
-		}
-		ctx.WriteString(n.GetString())
-	case KindBytes:
-		ctx.WriteString(n.GetString())
-	case KindMysqlDecimal:
-		ctx.WritePlain(n.GetMysqlDecimal().String())
-	case KindBinaryLiteral:
-		if n.Type.Charset != "" && n.Type.Charset != mysql.DefaultCharset &&
-			n.Type.Charset != charset.CharsetBin {
-			ctx.WritePlain("_")
-			ctx.WriteKeyWord(n.Type.Charset + " ")
-		}
-		if n.Type.Flag&mysql.UnsignedFlag != 0 {
-			ctx.WritePlainf("x'%x'", n.GetBytes())
-		} else {
-			ctx.WritePlain(n.GetBinaryLiteral().ToBitLiteralString(true))
-		}
-	case KindMysqlDuration, KindMysqlEnum,
-		KindMysqlBit, KindMysqlSet, KindMysqlTime,
-		KindInterface, KindMinNotNull, KindMaxValue,
-		KindRaw, KindMysqlJSON:
-		// TODO implement Restore function
-		return fmt.Errorf("not implemented")
-	default:
-		return fmt.Errorf("can't format to string")
-	}
-	return nil
-}
+func (n *ValueExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
+
+// TODO implement Restore function
 
 // GetDatumString implements the ValueExpr interface.
-func (n *ValueExpr) GetDatumString() string {
-	return n.GetString()
-}
+func (n *ValueExpr) GetDatumString() string { _ = "STUB: not implemented"; return "" }
 
 // Format the ExprNode into a Writer.
-func (n *ValueExpr) Format(w io.Writer) {
-	var s string
-	switch n.Kind() {
-	case KindNull:
-		s = "NULL"
-	case KindInt64:
-		if n.Type.Flag&mysql.IsBooleanFlag != 0 {
-			if n.GetInt64() > 0 {
-				s = "TRUE"
-			} else {
-				s = "FALSE"
-			}
-		} else {
-			s = strconv.FormatInt(n.GetInt64(), 10)
-		}
-	case KindUint64:
-		s = strconv.FormatUint(n.GetUint64(), 10)
-	case KindFloat32:
-		s = strconv.FormatFloat(n.GetFloat64(), 'e', -1, 32)
-	case KindFloat64:
-		s = strconv.FormatFloat(n.GetFloat64(), 'e', -1, 64)
-	case KindString, KindBytes:
-		s = strconv.Quote(n.GetString())
-	case KindMysqlDecimal:
-		s = n.GetMysqlDecimal().String()
-	case KindBinaryLiteral:
-		if n.Type.Flag&mysql.UnsignedFlag != 0 {
-			s = fmt.Sprintf("x'%x'", n.GetBytes())
-		} else {
-			s = n.GetBinaryLiteral().ToBitLiteralString(true)
-		}
-	default:
-		panic("Can't format to string")
-	}
-	_, _ = fmt.Fprint(w, s)
-}
+func (n *ValueExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // newValueExpr creates a ValueExpr with value, and sets default field type.
 func newValueExpr(value interface{}, charset string, collate string) ast.ValueExpr {
-	if ve, ok := value.(*ValueExpr); ok {
-		return ve
-	}
-	ve := &ValueExpr{}
-	ve.SetValue(value)
-	DefaultTypeForValue(value, &ve.Type, charset, collate)
-	ve.projectionOffset = -1
-	return ve
+	_ = "STUB: not implemented"
+	return *new(ast.ValueExpr)
 }
 
 // SetProjectionOffset sets ValueExpr.projectionOffset for logical plan builder.
-func (n *ValueExpr) SetProjectionOffset(offset int) {
-	n.projectionOffset = offset
-}
+func (n *ValueExpr) SetProjectionOffset(offset int) { _ = "STUB: not implemented"; return }
 
 // GetProjectionOffset returns ValueExpr.projectionOffset.
-func (n *ValueExpr) GetProjectionOffset() int {
-	return n.projectionOffset
-}
+func (n *ValueExpr) GetProjectionOffset() int { _ = "STUB: not implemented"; return 0 }
 
 // Accept implements Node interface.
 func (n *ValueExpr) Accept(v ast.Visitor) (ast.Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*ValueExpr)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(ast.Node), false
 }
 
 // ParamMarkerExpr expression holds a place for another expression.
@@ -196,32 +93,23 @@ type ParamMarkerExpr struct {
 
 // Restore implements Node interface.
 func (n *ParamMarkerExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WritePlain("?")
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func newParamMarkerExpr(offset int) ast.ParamMarkerExpr {
-	return &ParamMarkerExpr{
-		Offset: offset,
-	}
+	_ = "STUB: not implemented"
+	return *new(ast.ParamMarkerExpr)
 }
 
 // Format the ExprNode into a Writer.
-func (n *ParamMarkerExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *ParamMarkerExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *ParamMarkerExpr) Accept(v ast.Visitor) (ast.Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*ParamMarkerExpr)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(ast.Node), false
 }
 
 // SetOrder implements the ParamMarkerExpr interface.
-func (n *ParamMarkerExpr) SetOrder(order int) {
-	n.Order = order
-}
+func (n *ParamMarkerExpr) SetOrder(order int) { _ = "STUB: not implemented"; return }

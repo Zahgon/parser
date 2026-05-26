@@ -14,13 +14,9 @@
 package ast
 
 import (
-	"fmt"
 	"io"
-	"reflect"
 	"regexp"
-	"strings"
 
-	"github.com/pingcap/errors"
 	"github.com/pingcap/parser/format"
 	"github.com/pingcap/parser/model"
 	"github.com/pingcap/parser/opcode"
@@ -85,65 +81,15 @@ type BetweenExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *BetweenExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.Expr.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore BetweenExpr.Expr")
-	}
-	if n.Not {
-		ctx.WriteKeyWord(" NOT BETWEEN ")
-	} else {
-		ctx.WriteKeyWord(" BETWEEN ")
-	}
-	if err := n.Left.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore BetweenExpr.Left")
-	}
-	ctx.WriteKeyWord(" AND ")
-	if err := n.Right.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore BetweenExpr.Right ")
-	}
-	return nil
-}
+func (n *BetweenExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *BetweenExpr) Format(w io.Writer) {
-	n.Expr.Format(w)
-	if n.Not {
-		fmt.Fprint(w, " NOT BETWEEN ")
-	} else {
-		fmt.Fprint(w, " BETWEEN ")
-	}
-	n.Left.Format(w)
-	fmt.Fprint(w, " AND ")
-	n.Right.Format(w)
-}
+func (n *BetweenExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node interface.
 func (n *BetweenExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-
-	n = newNode.(*BetweenExpr)
-	node, ok := n.Expr.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Expr = node.(ExprNode)
-
-	node, ok = n.Left.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Left = node.(ExprNode)
-
-	node, ok = n.Right.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Right = node.(ExprNode)
-
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // BinaryOperationExpr is for binary operation like `1 + 1`, `1 - 1`, etc.
@@ -158,69 +104,25 @@ type BinaryOperationExpr struct {
 }
 
 func restoreBinaryOpWithSpacesAround(ctx *format.RestoreCtx, op opcode.Op) error {
-	shouldInsertSpace := ctx.Flags.HasSpacesAroundBinaryOperationFlag() || op.IsKeyword()
-	if shouldInsertSpace {
-		ctx.WritePlain(" ")
-	}
-	if err := op.Restore(ctx); err != nil {
-		return err // no need to annotate, the caller will annotate.
-	}
-	if shouldInsertSpace {
-		ctx.WritePlain(" ")
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
+// no need to annotate, the caller will annotate.
+
 // Restore implements Node interface.
 func (n *BinaryOperationExpr) Restore(ctx *format.RestoreCtx) error {
-	if ctx.Flags.HasRestoreBracketAroundBinaryOperation() {
-		ctx.WritePlain("(")
-	}
-	if err := n.L.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred when restore BinaryOperationExpr.L")
-	}
-	if err := restoreBinaryOpWithSpacesAround(ctx, n.Op); err != nil {
-		return errors.Annotate(err, "An error occurred when restore BinaryOperationExpr.Op")
-	}
-	if err := n.R.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred when restore BinaryOperationExpr.R")
-	}
-	if ctx.Flags.HasRestoreBracketAroundBinaryOperation() {
-		ctx.WritePlain(")")
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *BinaryOperationExpr) Format(w io.Writer) {
-	n.L.Format(w)
-	fmt.Fprint(w, " ")
-	n.Op.Format(w)
-	fmt.Fprint(w, " ")
-	n.R.Format(w)
-}
+func (n *BinaryOperationExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node interface.
 func (n *BinaryOperationExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-
-	n = newNode.(*BinaryOperationExpr)
-	node, ok := n.L.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.L = node.(ExprNode)
-
-	node, ok = n.R.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.R = node.(ExprNode)
-
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // WhenClause is the when clause in Case expression for "when condition then result".
@@ -233,38 +135,12 @@ type WhenClause struct {
 }
 
 // Restore implements Node interface.
-func (n *WhenClause) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("WHEN ")
-	if err := n.Expr.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore WhenClauses.Expr")
-	}
-	ctx.WriteKeyWord(" THEN ")
-	if err := n.Result.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore WhenClauses.Result")
-	}
-	return nil
-}
+func (n *WhenClause) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Accept implements Node Accept interface.
 func (n *WhenClause) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-
-	n = newNode.(*WhenClause)
-	node, ok := n.Expr.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Expr = node.(ExprNode)
-
-	node, ok = n.Result.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Result = node.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // CaseExpr is the case expression.
@@ -279,83 +155,17 @@ type CaseExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *CaseExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("CASE")
-	if n.Value != nil {
-		ctx.WritePlain(" ")
-		if err := n.Value.Restore(ctx); err != nil {
-			return errors.Annotate(err, "An error occurred while restore CaseExpr.Value")
-		}
-	}
-	for _, clause := range n.WhenClauses {
-		ctx.WritePlain(" ")
-		if err := clause.Restore(ctx); err != nil {
-			return errors.Annotate(err, "An error occurred while restore CaseExpr.WhenClauses")
-		}
-	}
-	if n.ElseClause != nil {
-		ctx.WriteKeyWord(" ELSE ")
-		if err := n.ElseClause.Restore(ctx); err != nil {
-			return errors.Annotate(err, "An error occurred while restore CaseExpr.ElseClause")
-		}
-	}
-	ctx.WriteKeyWord(" END")
-
-	return nil
-}
+func (n *CaseExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *CaseExpr) Format(w io.Writer) {
-	fmt.Fprint(w, "CASE")
-	// Because the presence of `case when` syntax, `Value` could be nil and we need check this.
-	if n.Value != nil {
-		fmt.Fprint(w, " ")
-		n.Value.Format(w)
-	}
-	for _, clause := range n.WhenClauses {
-		fmt.Fprint(w, " ")
-		fmt.Fprint(w, "WHEN ")
-		clause.Expr.Format(w)
-		fmt.Fprint(w, " THEN ")
-		clause.Result.Format(w)
-	}
-	if n.ElseClause != nil {
-		fmt.Fprint(w, " ELSE ")
-		n.ElseClause.Format(w)
-	}
-	fmt.Fprint(w, " END")
-}
+func (n *CaseExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
+
+// Because the presence of `case when` syntax, `Value` could be nil and we need check this.
 
 // Accept implements Node Accept interface.
 func (n *CaseExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-
-	n = newNode.(*CaseExpr)
-	if n.Value != nil {
-		node, ok := n.Value.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Value = node.(ExprNode)
-	}
-	for i, val := range n.WhenClauses {
-		node, ok := val.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.WhenClauses[i] = node.(*WhenClause)
-	}
-	if n.ElseClause != nil {
-		node, ok := n.ElseClause.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.ElseClause = node.(ExprNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // SubqueryExpr represents a subquery.
@@ -369,36 +179,22 @@ type SubqueryExpr struct {
 	Exists     bool
 }
 
-func (*SubqueryExpr) resultSet() {}
+func (*SubqueryExpr) resultSet() {
+	_ = "STUB: not implemented"
 
-// Restore implements Node interface.
-func (n *SubqueryExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WritePlain("(")
-	if err := n.Query.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore SubqueryExpr.Query")
-	}
-	ctx.WritePlain(")")
-	return nil
+	// Restore implements Node interface.
+	return
 }
+
+func (n *SubqueryExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *SubqueryExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *SubqueryExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *SubqueryExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*SubqueryExpr)
-	node, ok := n.Query.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Query = node.(ResultSetNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // CompareSubqueryExpr is the expression for "expr cmp (select ...)".
@@ -419,46 +215,17 @@ type CompareSubqueryExpr struct {
 
 // Restore implements Node interface.
 func (n *CompareSubqueryExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.L.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore CompareSubqueryExpr.L")
-	}
-	if err := restoreBinaryOpWithSpacesAround(ctx, n.Op); err != nil {
-		return errors.Annotate(err, "An error occurred while restore CompareSubqueryExpr.Op")
-	}
-	if n.All {
-		ctx.WriteKeyWord("ALL ")
-	} else {
-		ctx.WriteKeyWord("ANY ")
-	}
-	if err := n.R.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore CompareSubqueryExpr.R")
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *CompareSubqueryExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *CompareSubqueryExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *CompareSubqueryExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*CompareSubqueryExpr)
-	node, ok := n.L.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.L = node.(ExprNode)
-	node, ok = n.R.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.R = node.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // TableNameExpr represents a table-level object name expression, such as sequence/table/view etc.
@@ -471,35 +238,17 @@ type TableNameExpr struct {
 
 // Restore implements Node interface.
 func (n *TableNameExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.Name.Restore(ctx); err != nil {
-		return errors.Trace(err)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *TableNameExpr) Format(w io.Writer) {
-	dbName, tbName := n.Name.Schema.L, n.Name.Name.L
-	if dbName == "" {
-		fmt.Fprintf(w, "`%s`", tbName)
-	} else {
-		fmt.Fprintf(w, "`%s`.`%s`", dbName, tbName)
-	}
-}
+func (n *TableNameExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *TableNameExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*TableNameExpr)
-	node, ok := n.Name.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Name = node.(*TableName)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // ColumnName represents column name.
@@ -511,54 +260,19 @@ type ColumnName struct {
 }
 
 // Restore implements Node interface.
-func (n *ColumnName) Restore(ctx *format.RestoreCtx) error {
-	if n.Schema.O != "" {
-		ctx.WriteName(n.Schema.O)
-		ctx.WritePlain(".")
-	}
-	if n.Table.O != "" {
-		ctx.WriteName(n.Table.O)
-		ctx.WritePlain(".")
-	}
-	ctx.WriteName(n.Name.O)
-	return nil
-}
+func (n *ColumnName) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Accept implements Node Accept interface.
 func (n *ColumnName) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*ColumnName)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // String implements Stringer interface.
-func (n *ColumnName) String() string {
-	result := n.Name.L
-	if n.Table.L != "" {
-		result = n.Table.L + "." + result
-	}
-	if n.Schema.L != "" {
-		result = n.Schema.L + "." + result
-	}
-	return result
-}
+func (n *ColumnName) String() string { _ = "STUB: not implemented"; return "" }
 
 // OrigColName returns the full original column name.
-func (n *ColumnName) OrigColName() (ret string) {
-	ret = n.Name.O
-	if n.Table.O == "" {
-		return
-	}
-	ret = n.Table.O + "." + ret
-	if n.Schema.O == "" {
-		return
-	}
-	ret = n.Schema.O + "." + ret
-	return
-}
+func (n *ColumnName) OrigColName() (ret string) { _ = "STUB: not implemented"; return "" }
 
 // ColumnNameExpr represents a column name expression.
 type ColumnNameExpr struct {
@@ -574,31 +288,17 @@ type ColumnNameExpr struct {
 
 // Restore implements Node interface.
 func (n *ColumnNameExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.Name.Restore(ctx); err != nil {
-		return errors.Trace(err)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *ColumnNameExpr) Format(w io.Writer) {
-	name := strings.Replace(n.Name.String(), ".", "`.`", -1)
-	fmt.Fprintf(w, "`%s`", name)
-}
+func (n *ColumnNameExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *ColumnNameExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*ColumnNameExpr)
-	node, ok := n.Name.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Name = node.(*ColumnName)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // DefaultExpr is the default expression using default value for a column.
@@ -609,31 +309,15 @@ type DefaultExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *DefaultExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("DEFAULT")
-	if n.Name != nil {
-		ctx.WritePlain("(")
-		if err := n.Name.Restore(ctx); err != nil {
-			return errors.Annotate(err, "An error occurred while restore DefaultExpr.Name")
-		}
-		ctx.WritePlain(")")
-	}
-	return nil
-}
+func (n *DefaultExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *DefaultExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *DefaultExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *DefaultExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*DefaultExpr)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // ExistsSubqueryExpr is the expression for "exists (select ...)".
@@ -648,35 +332,17 @@ type ExistsSubqueryExpr struct {
 
 // Restore implements Node interface.
 func (n *ExistsSubqueryExpr) Restore(ctx *format.RestoreCtx) error {
-	if n.Not {
-		ctx.WriteKeyWord("NOT EXISTS ")
-	} else {
-		ctx.WriteKeyWord("EXISTS ")
-	}
-	if err := n.Sel.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore ExistsSubqueryExpr.Sel")
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *ExistsSubqueryExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *ExistsSubqueryExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *ExistsSubqueryExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*ExistsSubqueryExpr)
-	node, ok := n.Sel.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Sel = node.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // PatternInExpr is the expression for in operator, like "expr in (1, 2, 3)" or "expr in (select c from t)".
@@ -694,77 +360,17 @@ type PatternInExpr struct {
 
 // Restore implements Node interface.
 func (n *PatternInExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.Expr.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore PatternInExpr.Expr")
-	}
-	if n.Not {
-		ctx.WriteKeyWord(" NOT IN ")
-	} else {
-		ctx.WriteKeyWord(" IN ")
-	}
-	if n.Sel != nil {
-		if err := n.Sel.Restore(ctx); err != nil {
-			return errors.Annotate(err, "An error occurred while restore PatternInExpr.Sel")
-		}
-	} else {
-		ctx.WritePlain("(")
-		for i, expr := range n.List {
-			if i != 0 {
-				ctx.WritePlain(",")
-			}
-			if err := expr.Restore(ctx); err != nil {
-				return errors.Annotatef(err, "An error occurred while restore PatternInExpr.List[%d]", i)
-			}
-		}
-		ctx.WritePlain(")")
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *PatternInExpr) Format(w io.Writer) {
-	n.Expr.Format(w)
-	if n.Not {
-		fmt.Fprint(w, " NOT IN (")
-	} else {
-		fmt.Fprint(w, " IN (")
-	}
-	for i, expr := range n.List {
-		if i != 0 {
-			fmt.Fprint(w, ",")
-		}
-		expr.Format(w)
-	}
-	fmt.Fprint(w, ")")
-}
+func (n *PatternInExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *PatternInExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*PatternInExpr)
-	node, ok := n.Expr.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Expr = node.(ExprNode)
-	for i, val := range n.List {
-		node, ok = val.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.List[i] = node.(ExprNode)
-	}
-	if n.Sel != nil {
-		node, ok = n.Sel.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Sel = node.(ExprNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // IsNullExpr is the expression for null check.
@@ -777,41 +383,15 @@ type IsNullExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *IsNullExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.Expr.Restore(ctx); err != nil {
-		return errors.Trace(err)
-	}
-	if n.Not {
-		ctx.WriteKeyWord(" IS NOT NULL")
-	} else {
-		ctx.WriteKeyWord(" IS NULL")
-	}
-	return nil
-}
+func (n *IsNullExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *IsNullExpr) Format(w io.Writer) {
-	n.Expr.Format(w)
-	if n.Not {
-		fmt.Fprint(w, " IS NOT NULL")
-		return
-	}
-	fmt.Fprint(w, " IS NULL")
-}
+func (n *IsNullExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *IsNullExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*IsNullExpr)
-	node, ok := n.Expr.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Expr = node.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // IsTruthExpr is the expression for true/false check.
@@ -826,51 +406,15 @@ type IsTruthExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *IsTruthExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.Expr.Restore(ctx); err != nil {
-		return errors.Trace(err)
-	}
-	if n.Not {
-		ctx.WriteKeyWord(" IS NOT")
-	} else {
-		ctx.WriteKeyWord(" IS")
-	}
-	if n.True > 0 {
-		ctx.WriteKeyWord(" TRUE")
-	} else {
-		ctx.WriteKeyWord(" FALSE")
-	}
-	return nil
-}
+func (n *IsTruthExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *IsTruthExpr) Format(w io.Writer) {
-	n.Expr.Format(w)
-	if n.Not {
-		fmt.Fprint(w, " IS NOT")
-	} else {
-		fmt.Fprint(w, " IS")
-	}
-	if n.True > 0 {
-		fmt.Fprint(w, " TRUE")
-	} else {
-		fmt.Fprint(w, " FALSE")
-	}
-}
+func (n *IsTruthExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *IsTruthExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*IsTruthExpr)
-	node, ok := n.Expr.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Expr = node.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // PatternLikeExpr is the expression for like operator, e.g, expr like "%123%"
@@ -891,66 +435,17 @@ type PatternLikeExpr struct {
 
 // Restore implements Node interface.
 func (n *PatternLikeExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.Expr.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore PatternLikeExpr.Expr")
-	}
-
-	if n.Not {
-		ctx.WriteKeyWord(" NOT LIKE ")
-	} else {
-		ctx.WriteKeyWord(" LIKE ")
-	}
-
-	if err := n.Pattern.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore PatternLikeExpr.Pattern")
-	}
-
-	escape := string(n.Escape)
-	if escape != "\\" {
-		ctx.WriteKeyWord(" ESCAPE ")
-		ctx.WriteString(escape)
-
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *PatternLikeExpr) Format(w io.Writer) {
-	n.Expr.Format(w)
-	if n.Not {
-		fmt.Fprint(w, " NOT LIKE ")
-	} else {
-		fmt.Fprint(w, " LIKE ")
-	}
-	n.Pattern.Format(w)
-	if n.Escape != '\\' {
-		fmt.Fprint(w, " ESCAPE ")
-		fmt.Fprintf(w, "'%c'", n.Escape)
-	}
-}
+func (n *PatternLikeExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *PatternLikeExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*PatternLikeExpr)
-	if n.Expr != nil {
-		node, ok := n.Expr.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Expr = node.(ExprNode)
-	}
-	if n.Pattern != nil {
-		node, ok := n.Pattern.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Pattern = node.(ExprNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // ParamMarkerExpr expression holds a place for another expression.
@@ -969,36 +464,17 @@ type ParenthesesExpr struct {
 
 // Restore implements Node interface.
 func (n *ParenthesesExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WritePlain("(")
-	if err := n.Expr.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred when restore ParenthesesExpr.Expr")
-	}
-	ctx.WritePlain(")")
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *ParenthesesExpr) Format(w io.Writer) {
-	fmt.Fprint(w, "(")
-	n.Expr.Format(w)
-	fmt.Fprint(w, ")")
-}
+func (n *ParenthesesExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *ParenthesesExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*ParenthesesExpr)
-	if n.Expr != nil {
-		node, ok := n.Expr.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Expr = node.(ExprNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // PositionExpr is the expression for order by and group by position.
@@ -1015,31 +491,15 @@ type PositionExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *PositionExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WritePlainf("%d", n.N)
-	return nil
-}
+func (n *PositionExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *PositionExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *PositionExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *PositionExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*PositionExpr)
-	if n.P != nil {
-		node, ok := n.P.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.P = node.(ExprNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // PatternRegexpExpr is the pattern expression for pattern match.
@@ -1060,52 +520,17 @@ type PatternRegexpExpr struct {
 
 // Restore implements Node interface.
 func (n *PatternRegexpExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.Expr.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore PatternRegexpExpr.Expr")
-	}
-
-	if n.Not {
-		ctx.WriteKeyWord(" NOT REGEXP ")
-	} else {
-		ctx.WriteKeyWord(" REGEXP ")
-	}
-
-	if err := n.Pattern.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore PatternRegexpExpr.Pattern")
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *PatternRegexpExpr) Format(w io.Writer) {
-	n.Expr.Format(w)
-	if n.Not {
-		fmt.Fprint(w, " NOT REGEXP ")
-	} else {
-		fmt.Fprint(w, " REGEXP ")
-	}
-	n.Pattern.Format(w)
-}
+func (n *PatternRegexpExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *PatternRegexpExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*PatternRegexpExpr)
-	node, ok := n.Expr.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Expr = node.(ExprNode)
-	node, ok = n.Pattern.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Pattern = node.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // RowExpr is the expression for row constructor.
@@ -1117,41 +542,15 @@ type RowExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *RowExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("ROW")
-	ctx.WritePlain("(")
-	for i, v := range n.Values {
-		if i != 0 {
-			ctx.WritePlain(",")
-		}
-		if err := v.Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred when restore RowExpr.Values[%v]", i)
-		}
-	}
-	ctx.WritePlain(")")
-	return nil
-}
+func (n *RowExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *RowExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *RowExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *RowExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*RowExpr)
-	for i, val := range n.Values {
-		node, ok := val.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.Values[i] = node.(ExprNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // UnaryOperationExpr is the expression for unary operator.
@@ -1165,34 +564,17 @@ type UnaryOperationExpr struct {
 
 // Restore implements Node interface.
 func (n *UnaryOperationExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.Op.Restore(ctx); err != nil {
-		return errors.Trace(err)
-	}
-	if err := n.V.Restore(ctx); err != nil {
-		return errors.Trace(err)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *UnaryOperationExpr) Format(w io.Writer) {
-	n.Op.Format(w)
-	n.V.Format(w)
-}
+func (n *UnaryOperationExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *UnaryOperationExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*UnaryOperationExpr)
-	node, ok := n.V.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.V = node.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // ValuesExpr is the expression used in INSERT VALUES.
@@ -1203,38 +585,19 @@ type ValuesExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *ValuesExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("VALUES")
-	ctx.WritePlain("(")
-	if err := n.Column.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore ValuesExpr.Column")
-	}
-	ctx.WritePlain(")")
-
-	return nil
-}
+func (n *ValuesExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *ValuesExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *ValuesExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *ValuesExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*ValuesExpr)
-	node, ok := n.Column.Accept(v)
-	if !ok {
-		return n, false
-	}
-	// `node` may be *ast.ValueExpr, to avoid panic, we write `_` and do not use
-	// it.
-	n.Column, _ = node.(*ColumnNameExpr)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
+
+// `node` may be *ast.ValueExpr, to avoid panic, we write `_` and do not use
+// it.
 
 // VariableExpr is the expression for variable.
 type VariableExpr struct {
@@ -1252,54 +615,15 @@ type VariableExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *VariableExpr) Restore(ctx *format.RestoreCtx) error {
-	if n.IsSystem {
-		ctx.WritePlain("@@")
-		if n.ExplicitScope {
-			if n.IsGlobal {
-				ctx.WriteKeyWord("GLOBAL")
-			} else {
-				ctx.WriteKeyWord("SESSION")
-			}
-			ctx.WritePlain(".")
-		}
-	} else {
-		ctx.WritePlain("@")
-	}
-	ctx.WriteName(n.Name)
-
-	if n.Value != nil {
-		ctx.WritePlain(":=")
-		if err := n.Value.Restore(ctx); err != nil {
-			return errors.Annotate(err, "An error occurred while restore VariableExpr.Value")
-		}
-	}
-
-	return nil
-}
+func (n *VariableExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *VariableExpr) Format(w io.Writer) {
-	panic("Not implemented")
-}
+func (n *VariableExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *VariableExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*VariableExpr)
-	if n.Value == nil {
-		return v.Leave(n)
-	}
-
-	node, ok := n.Value.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Value = node.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // MaxValueExpr is the expression for "maxvalue" used in partition.
@@ -1308,23 +632,15 @@ type MaxValueExpr struct {
 }
 
 // Restore implements Node interface.
-func (n *MaxValueExpr) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("MAXVALUE")
-	return nil
-}
+func (n *MaxValueExpr) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
 // Format the ExprNode into a Writer.
-func (n *MaxValueExpr) Format(w io.Writer) {
-	fmt.Fprint(w, "MAXVALUE")
-}
+func (n *MaxValueExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *MaxValueExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // MatchAgainst is the expression for matching against fulltext index.
@@ -1338,73 +654,13 @@ type MatchAgainst struct {
 	Modifier FulltextSearchModifier
 }
 
-func (n *MatchAgainst) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("MATCH")
-	ctx.WritePlain(" (")
-	for i, v := range n.ColumnNames {
-		if i != 0 {
-			ctx.WritePlain(",")
-		}
-		if err := v.Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore MatchAgainst.ColumnNames[%d]", i)
-		}
-	}
-	ctx.WritePlain(") ")
-	ctx.WriteKeyWord("AGAINST")
-	ctx.WritePlain(" (")
-	if err := n.Against.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while restore MatchAgainst.Against")
-	}
-	if n.Modifier.IsBooleanMode() {
-		ctx.WritePlain(" IN BOOLEAN MODE")
-		if n.Modifier.WithQueryExpansion() {
-			return errors.New("BOOLEAN MODE doesn't support QUERY EXPANSION")
-		}
-	} else if n.Modifier.WithQueryExpansion() {
-		ctx.WritePlain(" WITH QUERY EXPANSION")
-	}
-	ctx.WritePlain(")")
-	return nil
-}
+func (n *MatchAgainst) Restore(ctx *format.RestoreCtx) error { _ = "STUB: not implemented"; return nil }
 
-func (n *MatchAgainst) Format(w io.Writer) {
-	fmt.Fprint(w, "MATCH(")
-	for i, v := range n.ColumnNames {
-		if i != 0 {
-			fmt.Fprintf(w, ",%s", v.String())
-		} else {
-			fmt.Fprint(w, v.String())
-		}
-	}
-	fmt.Fprint(w, ") AGAINST(")
-	n.Against.Format(w)
-	if n.Modifier.IsBooleanMode() {
-		fmt.Fprint(w, " IN BOOLEAN MODE")
-	} else if n.Modifier.WithQueryExpansion() {
-		fmt.Fprint(w, " WITH QUERY EXPANSION")
-	}
-	fmt.Fprint(w, ")")
-}
+func (n *MatchAgainst) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 func (n *MatchAgainst) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*MatchAgainst)
-	for i, colName := range n.ColumnNames {
-		newColName, ok := colName.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.ColumnNames[i] = newColName.(*ColumnName)
-	}
-	newAgainst, ok := n.Against.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Against = newAgainst.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // SetCollationExpr is the expression for the `COLLATE collation_name` clause.
@@ -1418,33 +674,17 @@ type SetCollationExpr struct {
 
 // Restore implements Node interface.
 func (n *SetCollationExpr) Restore(ctx *format.RestoreCtx) error {
-	if err := n.Expr.Restore(ctx); err != nil {
-		return errors.Trace(err)
-	}
-	ctx.WriteKeyWord(" COLLATE ")
-	ctx.WritePlain(n.Collate)
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Format the ExprNode into a Writer.
-func (n *SetCollationExpr) Format(w io.Writer) {
-	n.Expr.Format(w)
-	fmt.Fprintf(w, " COLLATE %s", n.Collate)
-}
+func (n *SetCollationExpr) Format(w io.Writer) { _ = "STUB: not implemented"; return }
 
 // Accept implements Node Accept interface.
 func (n *SetCollationExpr) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*SetCollationExpr)
-	node, ok := n.Expr.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Expr = node.(ExprNode)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 type exprTextPositionCleaner struct {
@@ -1452,35 +692,18 @@ type exprTextPositionCleaner struct {
 	restore    bool
 }
 
-func (e *exprTextPositionCleaner) BeginRestore() {
-	e.restore = true
-}
+func (e *exprTextPositionCleaner) BeginRestore() { _ = "STUB: not implemented"; return }
 
 func (e *exprTextPositionCleaner) Enter(n Node) (node Node, skipChildren bool) {
-	if e.restore {
-		n.SetOriginTextPosition(e.oldTextPos[0])
-		e.oldTextPos = e.oldTextPos[1:]
-		return n, false
-	}
-	e.oldTextPos = append(e.oldTextPos, n.OriginTextPosition())
-	n.SetOriginTextPosition(0)
-	return n, false
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 func (e *exprTextPositionCleaner) Leave(n Node) (node Node, ok bool) {
-	return n, true
+	_ = "STUB: not implemented"
+
+	// ExpressionDeepEqual compares the equivalence of two expressions.
+	return *new(Node), false
 }
 
-// ExpressionDeepEqual compares the equivalence of two expressions.
-func ExpressionDeepEqual(a ExprNode, b ExprNode) bool {
-	cleanerA := &exprTextPositionCleaner{}
-	cleanerB := &exprTextPositionCleaner{}
-	a.Accept(cleanerA)
-	b.Accept(cleanerB)
-	result := reflect.DeepEqual(a, b)
-	cleanerA.BeginRestore()
-	cleanerB.BeginRestore()
-	a.Accept(cleanerA)
-	b.Accept(cleanerB)
-	return result
-}
+func ExpressionDeepEqual(a ExprNode, b ExprNode) bool { _ = "STUB: not implemented"; return false }

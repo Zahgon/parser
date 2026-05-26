@@ -14,10 +14,6 @@
 package parser
 
 import (
-	"strconv"
-	"strings"
-	"unicode"
-
 	"github.com/pingcap/parser/ast"
 	"github.com/pingcap/parser/mysql"
 	"github.com/pingcap/parser/terror"
@@ -37,79 +33,11 @@ type hintScanner struct {
 }
 
 func (hs *hintScanner) Errorf(format string, args ...interface{}) error {
-	inner := hs.Scanner.Errorf(format, args...)
-	return ErrWarnOptimizerHintParseError.GenWithStackByArgs(inner)
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (hs *hintScanner) Lex(lval *yyhintSymType) int {
-	tok, pos, lit := hs.scan()
-	hs.lastScanOffset = pos.Offset
-	var errorTokenType string
-
-	switch tok {
-	case intLit:
-		n, e := strconv.ParseUint(lit, 10, 64)
-		if e != nil {
-			hs.AppendError(ErrWarnOptimizerHintInvalidInteger.GenWithStackByArgs(lit))
-			return int(unicode.ReplacementChar)
-		}
-		lval.number = n
-		return hintIntLit
-
-	case singleAtIdentifier:
-		lval.ident = lit
-		return hintSingleAtIdentifier
-
-	case identifier:
-		lval.ident = lit
-		if tok1, ok := hintTokenMap[strings.ToUpper(lit)]; ok {
-			return tok1
-		}
-		return hintIdentifier
-
-	case stringLit:
-		lval.ident = lit
-		if hs.sqlMode.HasANSIQuotesMode() && hs.r.s[pos.Offset] == '"' {
-			return hintIdentifier
-		}
-		return hintStringLit
-
-	case bitLit:
-		if strings.HasPrefix(lit, "0b") {
-			lval.ident = lit
-			return hintIdentifier
-		}
-		errorTokenType = "bit-value literal"
-
-	case hexLit:
-		if strings.HasPrefix(lit, "0x") {
-			lval.ident = lit
-			return hintIdentifier
-		}
-		errorTokenType = "hexadecimal literal"
-
-	case quotedIdentifier:
-		lval.ident = lit
-		return hintIdentifier
-
-	case eq:
-		return '='
-
-	case floatLit:
-		errorTokenType = "floating point number"
-	case decLit:
-		errorTokenType = "decimal number"
-
-	default:
-		if tok <= 0x7f {
-			return tok
-		}
-		errorTokenType = "unknown token"
-	}
-
-	hs.AppendError(ErrWarnOptimizerHintInvalidToken.GenWithStackByArgs(errorTokenType, lit, tok))
-	return int(unicode.ReplacementChar)
-}
+func (hs *hintScanner) Lex(lval *yyhintSymType) int { _ = "STUB: not implemented"; return 0 }
 
 type hintParser struct {
 	lexer  hintScanner
@@ -121,41 +49,23 @@ type hintParser struct {
 	yyVAL  *yyhintSymType
 }
 
-func newHintParser() *hintParser {
-	return &hintParser{cache: make([]yyhintSymType, 50)}
-}
+func newHintParser() *hintParser { _ = "STUB: not implemented"; return nil }
 
 func (hp *hintParser) parse(input string, sqlMode mysql.SQLMode, initPos Pos) ([]*ast.TableOptimizerHint, []error) {
-	hp.result = nil
-	hp.lexer.reset(input[3:])
-	hp.lexer.SetSQLMode(sqlMode)
-	hp.lexer.r.updatePos(Pos{
-		Line:   initPos.Line,
-		Col:    initPos.Col + 3, // skipped the initial '/*+'
-		Offset: 0,
-	})
-	hp.lexer.inBangComment = true // skip the final '*/' (we need the '*/' for reporting warnings)
-
-	yyhintParse(&hp.lexer, hp)
-
-	warns, errs := hp.lexer.Errors()
-	if len(errs) == 0 {
-		errs = warns
-	}
-	return hp.result, errs
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// skipped the initial '/*+'
+
+// skip the final '*/' (we need the '*/' for reporting warnings)
 
 // ParseHint parses an optimizer hint (the interior of `/*+ ... */`).
 func ParseHint(input string, sqlMode mysql.SQLMode, initPos Pos) ([]*ast.TableOptimizerHint, []error) {
-	hp := newHintParser()
-	return hp.parse(input, sqlMode, initPos)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (hp *hintParser) warnUnsupportedHint(name string) {
-	warn := ErrWarnOptimizerHintUnsupportedHint.GenWithStackByArgs(name)
-	hp.lexer.warns = append(hp.lexer.warns, warn)
-}
+func (hp *hintParser) warnUnsupportedHint(name string) { _ = "STUB: not implemented"; return }
 
-func (hp *hintParser) lastErrorAsWarn() {
-	hp.lexer.lastErrorAsWarn()
-}
+func (hp *hintParser) lastErrorAsWarn() { _ = "STUB: not implemented"; return }

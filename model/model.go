@@ -14,15 +14,10 @@
 package model
 
 import (
-	"encoding/json"
-	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
-	"github.com/pingcap/errors"
 	"github.com/pingcap/parser/auth"
-	"github.com/pingcap/parser/mysql"
 	"github.com/pingcap/parser/types"
 )
 
@@ -53,26 +48,7 @@ const (
 )
 
 // String implements fmt.Stringer interface.
-func (s SchemaState) String() string {
-	switch s {
-	case StateDeleteOnly:
-		return "delete only"
-	case StateWriteOnly:
-		return "write only"
-	case StateWriteReorganization:
-		return "write reorganization"
-	case StateDeleteReorganization:
-		return "delete reorganization"
-	case StatePublic:
-		return "public"
-	case StateReplicaOnly:
-		return "replica only"
-	case StateGlobalTxnOnly:
-		return "global txn only"
-	default:
-		return "queueing"
-	}
-}
+func (s SchemaState) String() string { _ = "STUB: not implemented"; return "" }
 
 const (
 	// ColumnInfoVersion0 means the column info version is 0.
@@ -125,95 +101,47 @@ type ColumnInfo struct {
 }
 
 // Clone clones ColumnInfo.
-func (c *ColumnInfo) Clone() *ColumnInfo {
-	nc := *c
-	return &nc
-}
+func (c *ColumnInfo) Clone() *ColumnInfo { _ = "STUB: not implemented"; return nil }
 
 // IsGenerated returns true if the column is generated column.
-func (c *ColumnInfo) IsGenerated() bool {
-	return len(c.GeneratedExprString) != 0
-}
+func (c *ColumnInfo) IsGenerated() bool { _ = "STUB: not implemented"; return false }
 
 // SetOriginDefaultValue sets the origin default value.
 // For mysql.TypeBit type, the default value storage format must be a string.
 // Other value such as int must convert to string format first.
 // The mysql.TypeBit type supports the null default value.
 func (c *ColumnInfo) SetOriginDefaultValue(value interface{}) error {
-	c.OriginDefaultValue = value
-	if c.Tp == mysql.TypeBit {
-		if value == nil {
-			return nil
-		}
-		if v, ok := value.(string); ok {
-			c.OriginDefaultValueBit = []byte(v)
-			return nil
-		}
-		return types.ErrInvalidDefault.GenWithStackByArgs(c.Name)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // GetOriginDefaultValue gets the origin default value.
-func (c *ColumnInfo) GetOriginDefaultValue() interface{} {
-	if c.Tp == mysql.TypeBit && c.OriginDefaultValueBit != nil {
-		// If the column type is BIT, both `OriginDefaultValue` and `DefaultValue` of ColumnInfo are corrupted,
-		// because the content before json.Marshal is INCONSISTENT with the content after json.Unmarshal.
-		return string(c.OriginDefaultValueBit)
-	}
-	return c.OriginDefaultValue
-}
+func (c *ColumnInfo) GetOriginDefaultValue() interface{} { _ = "STUB: not implemented"; return nil }
+
+// If the column type is BIT, both `OriginDefaultValue` and `DefaultValue` of ColumnInfo are corrupted,
+// because the content before json.Marshal is INCONSISTENT with the content after json.Unmarshal.
 
 // SetDefaultValue sets the default value.
 func (c *ColumnInfo) SetDefaultValue(value interface{}) error {
-	c.DefaultValue = value
-	if c.Tp == mysql.TypeBit {
-		// For mysql.TypeBit type, the default value storage format must be a string.
-		// Other value such as int must convert to string format first.
-		// The mysql.TypeBit type supports the null default value.
-		if value == nil {
-			return nil
-		}
-		if v, ok := value.(string); ok {
-			c.DefaultValueBit = []byte(v)
-			return nil
-		}
-		return types.ErrInvalidDefault.GenWithStackByArgs(c.Name)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
+
+// For mysql.TypeBit type, the default value storage format must be a string.
+// Other value such as int must convert to string format first.
+// The mysql.TypeBit type supports the null default value.
 
 // GetDefaultValue gets the default value of the column.
 // Default value use to stored in DefaultValue field, but now,
 // bit type default value will store in DefaultValueBit for fix bit default value decode/encode bug.
-func (c *ColumnInfo) GetDefaultValue() interface{} {
-	if c.Tp == mysql.TypeBit && c.DefaultValueBit != nil {
-		return string(c.DefaultValueBit)
-	}
-	return c.DefaultValue
-}
+func (c *ColumnInfo) GetDefaultValue() interface{} { _ = "STUB: not implemented"; return nil }
 
 // GetTypeDesc gets the description for column type.
-func (c *ColumnInfo) GetTypeDesc() string {
-	desc := c.FieldType.CompactStr()
-	if mysql.HasUnsignedFlag(c.Flag) && c.Tp != mysql.TypeBit && c.Tp != mysql.TypeYear {
-		desc += " unsigned"
-	}
-	if mysql.HasZerofillFlag(c.Flag) && c.Tp != mysql.TypeYear {
-		desc += " zerofill"
-	}
-	return desc
-}
+func (c *ColumnInfo) GetTypeDesc() string { _ = "STUB: not implemented"; return "" }
 
 // FindColumnInfo finds ColumnInfo in cols by name.
 func FindColumnInfo(cols []*ColumnInfo, name string) *ColumnInfo {
-	name = strings.ToLower(name)
-	for _, col := range cols {
-		if col.Name.L == name {
-			return col
-		}
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -351,16 +279,7 @@ const (
 	TempTableLocal
 )
 
-func (t TempTableType) String() string {
-	switch t {
-	case TempTableGlobal:
-		return "global"
-	case TempTableLocal:
-		return "local"
-	default:
-		return ""
-	}
-}
+func (t TempTableType) String() string { _ = "STUB: not implemented"; return "" }
 
 // TableLockInfo provides meta data describing a table lock.
 type TableLockInfo struct {
@@ -378,9 +297,7 @@ type SessionInfo struct {
 	SessionID uint64
 }
 
-func (s SessionInfo) String() string {
-	return "server: " + s.ServerID + "_session: " + strconv.FormatUint(s.SessionID, 10)
-}
+func (s SessionInfo) String() string { _ = "STUB: not implemented"; return "" }
 
 // TableLockTpInfo is composed by schema ID, table ID and table lock type.
 type TableLockTpInfo struct {
@@ -402,16 +319,7 @@ const (
 )
 
 // String implements fmt.Stringer interface.
-func (t TableLockState) String() string {
-	switch t {
-	case TableLockStatePreLock:
-		return "pre-lock"
-	case TableLockStatePublic:
-		return "public"
-	default:
-		return "none"
-	}
-}
+func (t TableLockState) String() string { _ = "STUB: not implemented"; return "" }
 
 // TableLockType is the type of the table lock.
 type TableLockType byte
@@ -434,23 +342,7 @@ const (
 	TableLockWriteLocal
 )
 
-func (t TableLockType) String() string {
-	switch t {
-	case TableLockNone:
-		return "NONE"
-	case TableLockRead:
-		return "READ"
-	case TableLockReadLocal:
-		return "READ LOCAL"
-	case TableLockReadOnly:
-		return "READ ONLY"
-	case TableLockWriteLocal:
-		return "WRITE LOCAL"
-	case TableLockWrite:
-		return "WRITE"
-	}
-	return ""
-}
+func (t TableLockType) String() string { _ = "STUB: not implemented"; return "" }
 
 // TiFlashReplicaInfo means the flash replica info.
 type TiFlashReplicaInfo struct {
@@ -462,189 +354,69 @@ type TiFlashReplicaInfo struct {
 
 // IsPartitionAvailable checks whether the partition table replica was available.
 func (tr *TiFlashReplicaInfo) IsPartitionAvailable(pid int64) bool {
-	for _, id := range tr.AvailablePartitionIDs {
-		if id == pid {
-			return true
-		}
-	}
+	_ = "STUB: not implemented"
 	return false
 }
 
 // GetPartitionInfo returns the partition information.
-func (t *TableInfo) GetPartitionInfo() *PartitionInfo {
-	if t.Partition != nil && t.Partition.Enable {
-		return t.Partition
-	}
-	return nil
-}
+func (t *TableInfo) GetPartitionInfo() *PartitionInfo { _ = "STUB: not implemented"; return nil }
 
 // GetUpdateTime gets the table's updating time.
-func (t *TableInfo) GetUpdateTime() time.Time {
-	return TSConvert2Time(t.UpdateTS)
-}
+func (t *TableInfo) GetUpdateTime() time.Time { _ = "STUB: not implemented"; return *new(time.Time) }
 
 // GetDBID returns the schema ID that is used to create an allocator.
 // TODO: Remove it after removing OldSchemaID.
-func (t *TableInfo) GetDBID(dbID int64) int64 {
-	if t.OldSchemaID != 0 {
-		return t.OldSchemaID
-	}
-	return dbID
-}
+func (t *TableInfo) GetDBID(dbID int64) int64 { _ = "STUB: not implemented"; return 0 }
 
 // Clone clones TableInfo.
-func (t *TableInfo) Clone() *TableInfo {
-	nt := *t
-	nt.Columns = make([]*ColumnInfo, len(t.Columns))
-	nt.Indices = make([]*IndexInfo, len(t.Indices))
-	nt.ForeignKeys = make([]*FKInfo, len(t.ForeignKeys))
-
-	for i := range t.Columns {
-		nt.Columns[i] = t.Columns[i].Clone()
-	}
-
-	for i := range t.Indices {
-		nt.Indices[i] = t.Indices[i].Clone()
-	}
-
-	for i := range t.ForeignKeys {
-		nt.ForeignKeys[i] = t.ForeignKeys[i].Clone()
-	}
-
-	return &nt
-}
+func (t *TableInfo) Clone() *TableInfo { _ = "STUB: not implemented"; return nil }
 
 // GetPkName will return the pk name if pk exists.
-func (t *TableInfo) GetPkName() CIStr {
-	for _, colInfo := range t.Columns {
-		if mysql.HasPriKeyFlag(colInfo.Flag) {
-			return colInfo.Name
-		}
-	}
-	return CIStr{}
-}
+func (t *TableInfo) GetPkName() CIStr { _ = "STUB: not implemented"; return *new(CIStr) }
 
 // GetPkColInfo gets the ColumnInfo of pk if exists.
 // Make sure PkIsHandle checked before call this method.
-func (t *TableInfo) GetPkColInfo() *ColumnInfo {
-	for _, colInfo := range t.Columns {
-		if mysql.HasPriKeyFlag(colInfo.Flag) {
-			return colInfo
-		}
-	}
-	return nil
-}
+func (t *TableInfo) GetPkColInfo() *ColumnInfo { _ = "STUB: not implemented"; return nil }
 
-func (t *TableInfo) GetAutoIncrementColInfo() *ColumnInfo {
-	for _, colInfo := range t.Columns {
-		if mysql.HasAutoIncrementFlag(colInfo.Flag) {
-			return colInfo
-		}
-	}
-	return nil
-}
+func (t *TableInfo) GetAutoIncrementColInfo() *ColumnInfo { _ = "STUB: not implemented"; return nil }
 
-func (t *TableInfo) IsAutoIncColUnsigned() bool {
-	col := t.GetAutoIncrementColInfo()
-	if col == nil {
-		return false
-	}
-	return mysql.HasUnsignedFlag(col.Flag)
-}
+func (t *TableInfo) IsAutoIncColUnsigned() bool { _ = "STUB: not implemented"; return false }
 
 // ContainsAutoRandomBits indicates whether a table contains auto_random column.
-func (t *TableInfo) ContainsAutoRandomBits() bool {
-	return t.AutoRandomBits != 0
-}
+func (t *TableInfo) ContainsAutoRandomBits() bool { _ = "STUB: not implemented"; return false }
 
 // IsAutoRandomBitColUnsigned indicates whether the auto_random column is unsigned. Make sure the table contains auto_random before calling this method.
-func (t *TableInfo) IsAutoRandomBitColUnsigned() bool {
-	if !t.PKIsHandle || t.AutoRandomBits == 0 {
-		return false
-	}
-	return mysql.HasUnsignedFlag(t.GetPkColInfo().Flag)
-}
+func (t *TableInfo) IsAutoRandomBitColUnsigned() bool { _ = "STUB: not implemented"; return false }
 
 // Cols returns the columns of the table in public state.
-func (t *TableInfo) Cols() []*ColumnInfo {
-	publicColumns := make([]*ColumnInfo, len(t.Columns))
-	maxOffset := -1
-	for _, col := range t.Columns {
-		if col.State != StatePublic {
-			continue
-		}
-		publicColumns[col.Offset] = col
-		if maxOffset < col.Offset {
-			maxOffset = col.Offset
-		}
-	}
-	return publicColumns[0 : maxOffset+1]
-}
+func (t *TableInfo) Cols() []*ColumnInfo { _ = "STUB: not implemented"; return nil }
 
 // FindIndexByName finds index by name.
 func (t *TableInfo) FindIndexByName(idxName string) *IndexInfo {
-	for _, idx := range t.Indices {
-		if idx.Name.L == idxName {
-			return idx
-		}
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // IsLocked checks whether the table was locked.
-func (t *TableInfo) IsLocked() bool {
-	return t.Lock != nil && len(t.Lock.Sessions) > 0
-}
+func (t *TableInfo) IsLocked() bool { _ = "STUB: not implemented"; return false }
 
 // NewExtraHandleColInfo mocks a column info for extra handle column.
-func NewExtraHandleColInfo() *ColumnInfo {
-	colInfo := &ColumnInfo{
-		ID:   ExtraHandleID,
-		Name: ExtraHandleName,
-	}
-	colInfo.Flag = mysql.PriKeyFlag | mysql.NotNullFlag
-	colInfo.Tp = mysql.TypeLonglong
-	colInfo.Flen, colInfo.Decimal = mysql.GetDefaultFieldLengthAndDecimal(mysql.TypeLonglong)
-	return colInfo
-}
+func NewExtraHandleColInfo() *ColumnInfo { _ = "STUB: not implemented"; return nil }
 
 // NewExtraPartitionIDColInfo mocks a column info for extra partition id column.
-func NewExtraPartitionIDColInfo() *ColumnInfo {
-	colInfo := &ColumnInfo{
-		ID:   ExtraPidColID,
-		Name: ExtraPartitionIdName,
-	}
-	colInfo.Tp = mysql.TypeLonglong
-	colInfo.Flen, colInfo.Decimal = mysql.GetDefaultFieldLengthAndDecimal(mysql.TypeLonglong)
-	return colInfo
-}
+func NewExtraPartitionIDColInfo() *ColumnInfo { _ = "STUB: not implemented"; return nil }
 
 // ColumnIsInIndex checks whether c is included in any indices of t.
-func (t *TableInfo) ColumnIsInIndex(c *ColumnInfo) bool {
-	for _, index := range t.Indices {
-		for _, column := range index.Columns {
-			if column.Name.L == c.Name.L {
-				return true
-			}
-		}
-	}
-	return false
-}
+func (t *TableInfo) ColumnIsInIndex(c *ColumnInfo) bool { _ = "STUB: not implemented"; return false }
 
 // IsView checks if TableInfo is a view.
-func (t *TableInfo) IsView() bool {
-	return t.View != nil
-}
+func (t *TableInfo) IsView() bool { _ = "STUB: not implemented"; return false }
 
 // IsSequence checks if TableInfo is a sequence.
-func (t *TableInfo) IsSequence() bool {
-	return t.Sequence != nil
-}
+func (t *TableInfo) IsSequence() bool { _ = "STUB: not implemented"; return false }
 
 // IsBaseTable checks to see the table is neither a view or a sequence.
-func (t *TableInfo) IsBaseTable() bool {
-	return t.Sequence == nil && t.View == nil
-}
+func (t *TableInfo) IsBaseTable() bool { _ = "STUB: not implemented"; return false }
 
 // ViewAlgorithm is VIEW's SQL ALGORITHM characteristic.
 // See https://dev.mysql.com/doc/refman/5.7/en/view-algorithms.html
@@ -656,18 +428,7 @@ const (
 	AlgorithmTemptable
 )
 
-func (v *ViewAlgorithm) String() string {
-	switch *v {
-	case AlgorithmMerge:
-		return "MERGE"
-	case AlgorithmTemptable:
-		return "TEMPTABLE"
-	case AlgorithmUndefined:
-		return "UNDEFINED"
-	default:
-		return "UNDEFINED"
-	}
-}
+func (v *ViewAlgorithm) String() string { _ = "STUB: not implemented"; return "" }
 
 // ViewSecurity is VIEW's SQL SECURITY characteristic.
 // See https://dev.mysql.com/doc/refman/5.7/en/create-view.html
@@ -678,16 +439,7 @@ const (
 	SecurityInvoker
 )
 
-func (v *ViewSecurity) String() string {
-	switch *v {
-	case SecurityInvoker:
-		return "INVOKER"
-	case SecurityDefiner:
-		return "DEFINER"
-	default:
-		return "DEFINER"
-	}
-}
+func (v *ViewSecurity) String() string { _ = "STUB: not implemented"; return "" }
 
 // ViewCheckOption is VIEW's WITH CHECK OPTION clause part.
 // See https://dev.mysql.com/doc/refman/5.7/en/view-check-option.html
@@ -698,16 +450,7 @@ const (
 	CheckOptionCascaded
 )
 
-func (v *ViewCheckOption) String() string {
-	switch *v {
-	case CheckOptionLocal:
-		return "LOCAL"
-	case CheckOptionCascaded:
-		return "CASCADED"
-	default:
-		return "CASCADED"
-	}
-}
+func (v *ViewCheckOption) String() string { _ = "STUB: not implemented"; return "" }
 
 // ViewInfo provides meta data describing a DB view.
 type ViewInfo struct {
@@ -757,23 +500,7 @@ const (
 	PartitionTypeSystemTime PartitionType = 5
 )
 
-func (p PartitionType) String() string {
-	switch p {
-	case PartitionTypeRange:
-		return "RANGE"
-	case PartitionTypeHash:
-		return "HASH"
-	case PartitionTypeList:
-		return "LIST"
-	case PartitionTypeKey:
-		return "KEY"
-	case PartitionTypeSystemTime:
-		return "SYSTEM_TIME"
-	default:
-		return ""
-	}
-
-}
+func (p PartitionType) String() string { _ = "STUB: not implemented"; return "" }
 
 // PartitionInfo provides table partition info.
 type PartitionInfo struct {
@@ -796,60 +523,22 @@ type PartitionInfo struct {
 }
 
 // GetNameByID gets the partition name by ID.
-func (pi *PartitionInfo) GetNameByID(id int64) string {
-	definitions := pi.Definitions
-	// do not convert this loop to `for _, def := range definitions`.
-	// see https://github.com/pingcap/parser/pull/1072 for the benchmark.
-	for i := range definitions {
-		if id == definitions[i].ID {
-			return definitions[i].Name.L
-		}
-	}
-	return ""
-}
+func (pi *PartitionInfo) GetNameByID(id int64) string { _ = "STUB: not implemented"; return "" }
+
+// do not convert this loop to `for _, def := range definitions`.
+// see https://github.com/pingcap/parser/pull/1072 for the benchmark.
 
 func (pi *PartitionInfo) GetStateByID(id int64) SchemaState {
-	for _, pstate := range pi.States {
-		if pstate.ID == id {
-			return pstate.State
-		}
-	}
-	return StatePublic
+	_ = "STUB: not implemented"
+	return *new(SchemaState)
 }
 
 func (pi *PartitionInfo) SetStateByID(id int64, state SchemaState) {
-	newState := PartitionState{ID: id, State: state}
-	for i, pstate := range pi.States {
-		if pstate.ID == id {
-			pi.States[i] = newState
-			return
-		}
-	}
-	if pi.States == nil {
-		pi.States = make([]PartitionState, 0, 1)
-	}
-	pi.States = append(pi.States, newState)
+	_ = "STUB: not implemented"
+	return
 }
 
-func (pi *PartitionInfo) GCPartitionStates() {
-	if len(pi.States) < 1 {
-		return
-	}
-	newStates := make([]PartitionState, 0, len(pi.Definitions))
-	for _, state := range pi.States {
-		found := false
-		for _, def := range pi.Definitions {
-			if def.ID == state.ID {
-				found = true
-				break
-			}
-		}
-		if found {
-			newStates = append(newStates, state)
-		}
-	}
-	pi.States = newStates
-}
+func (pi *PartitionInfo) GCPartitionStates() { _ = "STUB: not implemented"; return }
 
 type PartitionState struct {
 	ID    int64       `json:"id"`
@@ -869,21 +558,13 @@ type PartitionDefinition struct {
 
 // Clone clones ConstraintInfo.
 func (ci *PartitionDefinition) Clone() PartitionDefinition {
-	nci := *ci
-	nci.LessThan = make([]string, len(ci.LessThan))
-	copy(nci.LessThan, ci.LessThan)
-	return nci
+	_ = "STUB: not implemented"
+	return *new(PartitionDefinition)
 }
 
 // FindPartitionDefinitionByName finds PartitionDefinition by name.
 func (t *TableInfo) FindPartitionDefinitionByName(partitionDefinitionName string) *PartitionDefinition {
-	lowConstrName := strings.ToLower(partitionDefinitionName)
-	definitions := t.Partition.Definitions
-	for i := range definitions {
-		if definitions[i].Name.L == lowConstrName {
-			return &t.Partition.Definitions[i]
-		}
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -898,25 +579,13 @@ type IndexColumn struct {
 }
 
 // Clone clones IndexColumn.
-func (i *IndexColumn) Clone() *IndexColumn {
-	ni := *i
-	return &ni
-}
+func (i *IndexColumn) Clone() *IndexColumn { _ = "STUB: not implemented"; return nil }
 
 // PrimaryKeyType is the type of primary key.
-// Available values are 'clustered', 'nonclustered', and ''(default).
+// Available values are 'clustered', 'nonclustered', and ”(default).
 type PrimaryKeyType int8
 
-func (p PrimaryKeyType) String() string {
-	switch p {
-	case PrimaryKeyTypeClustered:
-		return "CLUSTERED"
-	case PrimaryKeyTypeNonClustered:
-		return "NONCLUSTERED"
-	default:
-		return ""
-	}
-}
+func (p PrimaryKeyType) String() string { _ = "STUB: not implemented"; return "" }
 
 const (
 	PrimaryKeyTypeDefault PrimaryKeyType = iota
@@ -928,18 +597,7 @@ const (
 type IndexType int
 
 // String implements Stringer interface.
-func (t IndexType) String() string {
-	switch t {
-	case IndexTypeBtree:
-		return "BTREE"
-	case IndexTypeHash:
-		return "HASH"
-	case IndexTypeRtree:
-		return "RTREE"
-	default:
-		return ""
-	}
-}
+func (t IndexType) String() string { _ = "STUB: not implemented"; return "" }
 
 // IndexTypes
 const (
@@ -967,24 +625,10 @@ type IndexInfo struct {
 }
 
 // Clone clones IndexInfo.
-func (index *IndexInfo) Clone() *IndexInfo {
-	ni := *index
-	ni.Columns = make([]*IndexColumn, len(index.Columns))
-	for i := range index.Columns {
-		ni.Columns[i] = index.Columns[i].Clone()
-	}
-	return &ni
-}
+func (index *IndexInfo) Clone() *IndexInfo { _ = "STUB: not implemented"; return nil }
 
 // HasPrefixIndex returns whether any columns of this index uses prefix length.
-func (index *IndexInfo) HasPrefixIndex() bool {
-	for _, ic := range index.Columns {
-		if ic.Length != types.UnspecifiedLength {
-			return true
-		}
-	}
-	return false
-}
+func (index *IndexInfo) HasPrefixIndex() bool { _ = "STUB: not implemented"; return false }
 
 // ConstraintInfo provides meta data describing check-expression constraint.
 type ConstraintInfo struct {
@@ -999,22 +643,11 @@ type ConstraintInfo struct {
 }
 
 // Clone clones ConstraintInfo.
-func (ci *ConstraintInfo) Clone() *ConstraintInfo {
-	nci := *ci
-
-	nci.ConstraintCols = make([]CIStr, len(ci.ConstraintCols))
-	copy(nci.ConstraintCols, ci.ConstraintCols)
-	return &nci
-}
+func (ci *ConstraintInfo) Clone() *ConstraintInfo { _ = "STUB: not implemented"; return nil }
 
 // FindConstraintInfoByName finds constraintInfo by name.
 func (t *TableInfo) FindConstraintInfoByName(constrName string) *ConstraintInfo {
-	lowConstrName := strings.ToLower(constrName)
-	for _, chk := range t.Constraints {
-		if chk.Name.L == lowConstrName {
-			return chk
-		}
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -1031,16 +664,7 @@ type FKInfo struct {
 }
 
 // Clone clones FKInfo.
-func (fk *FKInfo) Clone() *FKInfo {
-	nfk := *fk
-
-	nfk.RefCols = make([]CIStr, len(fk.RefCols))
-	nfk.Cols = make([]CIStr, len(fk.Cols))
-	copy(nfk.RefCols, fk.RefCols)
-	copy(nfk.Cols, fk.Cols)
-
-	return &nfk
-}
+func (fk *FKInfo) Clone() *FKInfo { _ = "STUB: not implemented"; return nil }
 
 // DBInfo provides meta data describing a DB.
 type DBInfo struct {
@@ -1055,22 +679,10 @@ type DBInfo struct {
 }
 
 // Clone clones DBInfo.
-func (db *DBInfo) Clone() *DBInfo {
-	newInfo := *db
-	newInfo.Tables = make([]*TableInfo, len(db.Tables))
-	for i := range db.Tables {
-		newInfo.Tables[i] = db.Tables[i].Clone()
-	}
-	return &newInfo
-}
+func (db *DBInfo) Clone() *DBInfo { _ = "STUB: not implemented"; return nil }
 
 // Copy shallow copies DBInfo.
-func (db *DBInfo) Copy() *DBInfo {
-	newInfo := *db
-	newInfo.Tables = make([]*TableInfo, len(db.Tables))
-	copy(newInfo.Tables, db.Tables)
-	return &newInfo
-}
+func (db *DBInfo) Copy() *DBInfo { _ = "STUB: not implemented"; return nil }
 
 // CIStr is case insensitive string.
 type CIStr struct {
@@ -1080,34 +692,21 @@ type CIStr struct {
 
 // String implements fmt.Stringer interface.
 func (cis CIStr) String() string {
-	return cis.O
+	_ = "STUB: not implemented"
+
+	// NewCIStr creates a new CIStr.
+	return ""
 }
 
-// NewCIStr creates a new CIStr.
-func NewCIStr(s string) (cs CIStr) {
-	cs.O = s
-	cs.L = strings.ToLower(s)
-	return
-}
+func NewCIStr(s string) (cs CIStr) { _ = "STUB: not implemented"; return *new(CIStr) }
 
 // UnmarshalJSON implements the user defined unmarshal method.
 // CIStr can be unmarshaled from a single string, so PartitionDefinition.Name
 // in this change https://github.com/pingcap/tidb/pull/6460/files would be
 // compatible during TiDB upgrading.
-func (cis *CIStr) UnmarshalJSON(b []byte) error {
-	type T CIStr
-	if err := json.Unmarshal(b, (*T)(cis)); err == nil {
-		return nil
-	}
+func (cis *CIStr) UnmarshalJSON(b []byte) error { _ = "STUB: not implemented"; return nil }
 
-	// Unmarshal CIStr from a single string.
-	err := json.Unmarshal(b, &cis.O)
-	if err != nil {
-		return errors.Trace(err)
-	}
-	cis.L = strings.ToLower(cis.O)
-	return nil
-}
+// Unmarshal CIStr from a single string.
 
 // TableColumnID is composed by table ID and column ID.
 type TableColumnID struct {
@@ -1144,58 +743,6 @@ type PolicyInfo struct {
 	State SchemaState `json:"state"`
 }
 
-func writeSettingItemToBuilder(sb *strings.Builder, item string) {
-	if sb.Len() != 0 {
-		sb.WriteString(" ")
-	}
-	sb.WriteString(item)
-}
+func writeSettingItemToBuilder(sb *strings.Builder, item string) { _ = "STUB: not implemented"; return }
 
-func (p *PlacementSettings) String() string {
-	sb := new(strings.Builder)
-	if len(p.PrimaryRegion) > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("PRIMARY_REGION=\"%s\"", p.PrimaryRegion))
-	}
-
-	if len(p.Regions) > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("REGIONS=\"%s\"", p.Regions))
-	}
-
-	if len(p.Schedule) > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("SCHEDULE=\"%s\"", p.Schedule))
-	}
-
-	if len(p.Constraints) > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("CONSTRAINTS=\"%s\"", p.Constraints))
-	}
-
-	if len(p.LeaderConstraints) > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("LEADER_CONSTRAINTS=\"%s\"", p.LeaderConstraints))
-	}
-
-	if p.Voters > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("VOTERS=%d", p.Voters))
-	}
-
-	if len(p.VoterConstraints) > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("VOTER_CONSTRAINTS=\"%s\"", p.VoterConstraints))
-	}
-
-	if p.Followers > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("FOLLOWERS=%d", p.Followers))
-	}
-
-	if len(p.FollowerConstraints) > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("FOLLOWER_CONSTRAINTS=\"%s\"", p.FollowerConstraints))
-	}
-
-	if p.Learners > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("LEARNERS=%d", p.Learners))
-	}
-
-	if len(p.LearnerConstraints) > 0 {
-		writeSettingItemToBuilder(sb, fmt.Sprintf("LEARNER_CONSTRAINTS=\"%s\"", p.LearnerConstraints))
-	}
-
-	return sb.String()
-}
+func (p *PlacementSettings) String() string { _ = "STUB: not implemented"; return "" }

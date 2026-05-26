@@ -32,31 +32,14 @@ type IndexAdviseStmt struct {
 
 // Restore implements Node Accept interface.
 func (n *IndexAdviseStmt) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("INDEX ADVISE ")
-	if n.IsLocal {
-		ctx.WriteKeyWord("LOCAL ")
-	}
-	ctx.WriteKeyWord("INFILE ")
-	ctx.WriteString(n.Path)
-	if n.MaxMinutes != UnspecifiedSize {
-		ctx.WriteKeyWord(" MAX_MINUTES ")
-		ctx.WritePlainf("%d", n.MaxMinutes)
-	}
-	if n.MaxIndexNum != nil {
-		n.MaxIndexNum.Restore(ctx)
-	}
-	n.LinesInfo.Restore(ctx)
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Accept implements Node Accept interface.
 func (n *IndexAdviseStmt) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*IndexAdviseStmt)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // MaxIndexNumClause represents 'maximum number of indexes' clause in index advise statement.
@@ -67,14 +50,6 @@ type MaxIndexNumClause struct {
 
 // Restore for max index num clause
 func (n *MaxIndexNumClause) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord(" MAX_IDXNUM")
-	if n.PerTable != UnspecifiedSize {
-		ctx.WriteKeyWord(" PER_TABLE ")
-		ctx.WritePlainf("%d", n.PerTable)
-	}
-	if n.PerDB != UnspecifiedSize {
-		ctx.WriteKeyWord(" PER_DB ")
-		ctx.WritePlainf("%d", n.PerDB)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }

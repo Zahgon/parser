@@ -172,39 +172,24 @@ type PrivilegeType uint64
 
 // NewPrivFromColumn constructs priv from a column name. False means invalid priv column name.
 func NewPrivFromColumn(col string) (PrivilegeType, bool) {
-	p, o := Col2PrivType[col]
-	return p, o
+	_ = "STUB: not implemented"
+	return *new(PrivilegeType), false
 }
 
 // NewPrivFromSetEnum constructs priv from a set enum. False means invalid priv enum.
 func NewPrivFromSetEnum(e string) (PrivilegeType, bool) {
-	p, o := SetStr2Priv[e]
-	return p, o
+	_ = "STUB: not implemented"
+	return *new(PrivilegeType), false
 }
 
 // String returns the corresponding identifier in SQLs.
-func (p PrivilegeType) String() string {
-	if s, ok := Priv2Str[p]; ok {
-		return s
-	}
-	return ""
-}
+func (p PrivilegeType) String() string { _ = "STUB: not implemented"; return "" }
 
 // ColumnString returns the corresponding name of columns in mysql.user/mysql.db.
-func (p PrivilegeType) ColumnString() string {
-	if s, ok := Priv2UserCol[p]; ok {
-		return s
-	}
-	return ""
-}
+func (p PrivilegeType) ColumnString() string { _ = "STUB: not implemented"; return "" }
 
 // SetString returns the corresponding set enum string in Table_priv/Column_priv of mysql.tables_priv/mysql.columns_priv.
-func (p PrivilegeType) SetString() string {
-	if s, ok := Priv2SetStr[p]; ok {
-		return s
-	}
-	return ""
-}
+func (p PrivilegeType) SetString() string { _ = "STUB: not implemented"; return "" }
 
 const (
 	// UsagePriv is a synonym for “no privileges”
@@ -290,14 +275,7 @@ const AllPrivMask = AllPriv - 1
 
 type Privileges []PrivilegeType
 
-func (privs Privileges) Has(p PrivilegeType) bool {
-	for _, cp := range privs {
-		if cp == p {
-			return true
-		}
-	}
-	return false
-}
+func (privs Privileges) Has(p PrivilegeType) bool { _ = "STUB: not implemented"; return false }
 
 // AllGlobalPrivs is all the privileges in global scope.
 var AllGlobalPrivs = Privileges{SelectPriv, InsertPriv, UpdatePriv, DeletePriv, CreatePriv, DropPriv, ProcessPriv, ReferencesPriv, AlterPriv, ShowDBPriv, SuperPriv, ExecutePriv, IndexPriv, CreateUserPriv, CreateTablespacePriv, TriggerPriv, CreateViewPriv, ShowViewPriv, CreateRolePriv, DropRolePriv, CreateTMPTablePriv, LockTablesPriv, CreateRoutinePriv, AlterRoutinePriv, EventPriv, ShutdownPriv, ReloadPriv, FilePriv, ConfigPriv, ReplicationClientPriv, ReplicationSlavePriv}

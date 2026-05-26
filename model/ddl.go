@@ -15,8 +15,6 @@ package model
 
 import (
 	"encoding/json"
-	"fmt"
-	"math"
 	"sync"
 	"time"
 
@@ -145,12 +143,7 @@ var actionMap = map[ActionType]string{
 }
 
 // String return current ddl action in string
-func (action ActionType) String() string {
-	if v, ok := actionMap[action]; ok {
-		return v
-	}
-	return "none"
-}
+func (action ActionType) String() string { _ = "STUB: not implemented"; return "" }
 
 // HistoryInfo is used for binlog.
 type HistoryInfo struct {
@@ -162,24 +155,17 @@ type HistoryInfo struct {
 
 // AddDBInfo adds schema version and schema information that are used for binlog.
 // dbInfo is added in the following operations: create database, drop database.
-func (h *HistoryInfo) AddDBInfo(schemaVer int64, dbInfo *DBInfo) {
-	h.SchemaVersion = schemaVer
-	h.DBInfo = dbInfo
-}
+func (h *HistoryInfo) AddDBInfo(schemaVer int64, dbInfo *DBInfo) { _ = "STUB: not implemented"; return }
 
 // AddTableInfo adds schema version and table information that are used for binlog.
 // tblInfo is added except for the following operations: create database, drop database.
 func (h *HistoryInfo) AddTableInfo(schemaVer int64, tblInfo *TableInfo) {
-	h.SchemaVersion = schemaVer
-	h.TableInfo = tblInfo
+	_ = "STUB: not implemented"
+	return
 }
 
 // Clean cleans history information.
-func (h *HistoryInfo) Clean() {
-	h.SchemaVersion = 0
-	h.DBInfo = nil
-	h.TableInfo = nil
-}
+func (h *HistoryInfo) Clean() { _ = "STUB: not implemented"; return }
 
 // DDLReorgMeta is meta info of DDL reorganization.
 type DDLReorgMeta struct {
@@ -193,11 +179,7 @@ type DDLReorgMeta struct {
 }
 
 // NewDDLReorgMeta new a DDLReorgMeta.
-func NewDDLReorgMeta() *DDLReorgMeta {
-	return &DDLReorgMeta{
-		EndHandle: math.MaxInt64,
-	}
-}
+func NewDDLReorgMeta() *DDLReorgMeta { _ = "STUB: not implemented"; return nil }
 
 // MultiSchemaInfo keeps some information for multi schema change.
 type MultiSchemaInfo struct {
@@ -256,121 +238,61 @@ type Job struct {
 // FinishTableJob is called when a job is finished.
 // It updates the job's state information and adds tblInfo to the binlog.
 func (job *Job) FinishTableJob(jobState JobState, schemaState SchemaState, ver int64, tblInfo *TableInfo) {
-	job.State = jobState
-	job.SchemaState = schemaState
-	job.BinlogInfo.AddTableInfo(ver, tblInfo)
+	_ = "STUB: not implemented"
+	return
 }
 
 // FinishDBJob is called when a job is finished.
 // It updates the job's state information and adds dbInfo the binlog.
 func (job *Job) FinishDBJob(jobState JobState, schemaState SchemaState, ver int64, dbInfo *DBInfo) {
-	job.State = jobState
-	job.SchemaState = schemaState
-	job.BinlogInfo.AddDBInfo(ver, dbInfo)
+	_ = "STUB: not implemented"
+	return
 }
 
 // TSConvert2Time converts timestamp to time.
 func TSConvert2Time(ts uint64) time.Time {
-	t := int64(ts >> 18) // 18 is for the logical time.
-	return time.Unix(t/1e3, (t%1e3)*1e6)
+	_ = "STUB: not implemented"
+	// 18 is for the logical time.
+	return *new(time.Time)
 }
 
 // SetRowCount sets the number of rows. Make sure it can pass `make race`.
-func (job *Job) SetRowCount(count int64) {
-	job.Mu.Lock()
-	defer job.Mu.Unlock()
-
-	job.RowCount = count
-}
+func (job *Job) SetRowCount(count int64) { _ = "STUB: not implemented"; return }
 
 // GetRowCount gets the number of rows. Make sure it can pass `make race`.
-func (job *Job) GetRowCount() int64 {
-	job.Mu.Lock()
-	defer job.Mu.Unlock()
-
-	return job.RowCount
-}
+func (job *Job) GetRowCount() int64 { _ = "STUB: not implemented"; return 0 }
 
 // SetWarnings sets the warnings of rows handled.
 func (job *Job) SetWarnings(warnings map[errors.ErrorID]*terror.Error, warningsCount map[errors.ErrorID]int64) {
-	job.ReorgMeta.Warnings = warnings
-	job.ReorgMeta.WarningsCount = warningsCount
+	_ = "STUB: not implemented"
+	return
 }
 
 // GetWarnings gets the warnings of the rows handled.
 func (job *Job) GetWarnings() (map[errors.ErrorID]*terror.Error, map[errors.ErrorID]int64) {
-	return job.ReorgMeta.Warnings, job.ReorgMeta.WarningsCount
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Encode encodes job with json format.
 // updateRawArgs is used to determine whether to update the raw args.
 func (job *Job) Encode(updateRawArgs bool) ([]byte, error) {
-	var err error
-	if updateRawArgs {
-		job.RawArgs, err = json.Marshal(job.Args)
-		if err != nil {
-			return nil, errors.Trace(err)
-		}
-	}
-
-	var b []byte
-	job.Mu.Lock()
-	defer job.Mu.Unlock()
-	b, err = json.Marshal(job)
-
-	return b, errors.Trace(err)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Decode decodes job from the json buffer, we must use DecodeArgs later to
 // decode special args for this job.
-func (job *Job) Decode(b []byte) error {
-	err := json.Unmarshal(b, job)
-	return errors.Trace(err)
-}
+func (job *Job) Decode(b []byte) error { _ = "STUB: not implemented"; return nil }
 
 // DecodeArgs decodes job args.
-func (job *Job) DecodeArgs(args ...interface{}) error {
-	var rawArgs []json.RawMessage
-	if err := json.Unmarshal(job.RawArgs, &rawArgs); err != nil {
-		return errors.Trace(err)
-	}
-
-	sz := len(rawArgs)
-	if sz > len(args) {
-		sz = len(args)
-	}
-
-	for i := 0; i < sz; i++ {
-		if err := json.Unmarshal(rawArgs[i], args[i]); err != nil {
-			return errors.Trace(err)
-		}
-	}
-	job.Args = args[:sz]
-	return nil
-}
+func (job *Job) DecodeArgs(args ...interface{}) error { _ = "STUB: not implemented"; return nil }
 
 // String implements fmt.Stringer interface.
-func (job *Job) String() string {
-	rowCount := job.GetRowCount()
-	return fmt.Sprintf("ID:%d, Type:%s, State:%s, SchemaState:%s, SchemaID:%d, TableID:%d, RowCount:%d, ArgLen:%d, start time: %v, Err:%v, ErrCount:%d, SnapshotVersion:%v",
-		job.ID, job.Type, job.State, job.SchemaState, job.SchemaID, job.TableID, rowCount, len(job.Args), TSConvert2Time(job.StartTS), job.Error, job.ErrorCount, job.SnapshotVer)
-}
+func (job *Job) String() string { _ = "STUB: not implemented"; return "" }
 
 func (job *Job) hasDependentSchema(other *Job) (bool, error) {
-	if other.Type == ActionDropSchema || other.Type == ActionCreateSchema {
-		if other.SchemaID == job.SchemaID {
-			return true, nil
-		}
-		if job.Type == ActionRenameTable {
-			var oldSchemaID int64
-			if err := job.DecodeArgs(&oldSchemaID); err != nil {
-				return false, errors.Trace(err)
-			}
-			if other.SchemaID == oldSchemaID {
-				return true, nil
-			}
-		}
-	}
+	_ = "STUB: not implemented"
 	return false, nil
 }
 
@@ -379,62 +301,36 @@ func (job *Job) hasDependentSchema(other *Job) (bool, error) {
 // 1. The two jobs handle the same database when one of the two jobs is an ActionDropSchema or ActionCreateSchema type.
 // 2. Or the two jobs handle the same table.
 func (job *Job) IsDependentOn(other *Job) (bool, error) {
-	isDependent, err := job.hasDependentSchema(other)
-	if err != nil || isDependent {
-		return isDependent, errors.Trace(err)
-	}
-	isDependent, err = other.hasDependentSchema(job)
-	if err != nil || isDependent {
-		return isDependent, errors.Trace(err)
-	}
-
-	// TODO: If a job is ActionRenameTable, we need to check table name.
-	if other.TableID == job.TableID {
-		return true, nil
-	}
+	_ = "STUB: not implemented"
 	return false, nil
 }
 
+// TODO: If a job is ActionRenameTable, we need to check table name.
+
 // IsFinished returns whether job is finished or not.
 // If the job state is Done or Cancelled, it is finished.
-func (job *Job) IsFinished() bool {
-	return job.State == JobStateDone || job.State == JobStateRollbackDone || job.State == JobStateCancelled
-}
+func (job *Job) IsFinished() bool { _ = "STUB: not implemented"; return false }
 
 // IsCancelled returns whether the job is cancelled or not.
-func (job *Job) IsCancelled() bool {
-	return job.State == JobStateCancelled
-}
+func (job *Job) IsCancelled() bool { _ = "STUB: not implemented"; return false }
 
 // IsRollbackDone returns whether the job is rolled back or not.
-func (job *Job) IsRollbackDone() bool {
-	return job.State == JobStateRollbackDone
-}
+func (job *Job) IsRollbackDone() bool { _ = "STUB: not implemented"; return false }
 
 // IsRollingback returns whether the job is rolling back or not.
-func (job *Job) IsRollingback() bool {
-	return job.State == JobStateRollingback
-}
+func (job *Job) IsRollingback() bool { _ = "STUB: not implemented"; return false }
 
 // IsCancelling returns whether the job is cancelling or not.
-func (job *Job) IsCancelling() bool {
-	return job.State == JobStateCancelling
-}
+func (job *Job) IsCancelling() bool { _ = "STUB: not implemented"; return false }
 
 // IsSynced returns whether the DDL modification is synced among all TiDB servers.
-func (job *Job) IsSynced() bool {
-	return job.State == JobStateSynced
-}
+func (job *Job) IsSynced() bool { _ = "STUB: not implemented"; return false }
 
 // IsDone returns whether job is done.
-func (job *Job) IsDone() bool {
-	return job.State == JobStateDone
-}
+func (job *Job) IsDone() bool { _ = "STUB: not implemented"; return false }
 
 // IsRunning returns whether job is still running or not.
-func (job *Job) IsRunning() bool {
-	return job.State == JobStateRunning
-}
+func (job *Job) IsRunning() bool { _ = "STUB: not implemented"; return false }
 
 // JobState is for job state.
 type JobState byte
@@ -458,26 +354,7 @@ const (
 )
 
 // String implements fmt.Stringer interface.
-func (s JobState) String() string {
-	switch s {
-	case JobStateRunning:
-		return "running"
-	case JobStateRollingback:
-		return "rollingback"
-	case JobStateRollbackDone:
-		return "rollback done"
-	case JobStateDone:
-		return "done"
-	case JobStateCancelled:
-		return "cancelled"
-	case JobStateCancelling:
-		return "cancelling"
-	case JobStateSynced:
-		return "synced"
-	default:
-		return "none"
-	}
-}
+func (s JobState) String() string { _ = "STUB: not implemented"; return "" }
 
 // SchemaDiff contains the schema modification at a particular schema version.
 // It is used to reduce schema reload cost.

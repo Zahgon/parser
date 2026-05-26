@@ -84,81 +84,49 @@ const (
 )
 
 // HasDropColumnWithIndexFlag checks if DropColumnIndexFlag is set.
-func HasDropColumnWithIndexFlag(flag uint) bool {
-	return (flag & DropColumnIndexFlag) > 0
-}
+func HasDropColumnWithIndexFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasNotNullFlag checks if NotNullFlag is set.
-func HasNotNullFlag(flag uint) bool {
-	return (flag & NotNullFlag) > 0
-}
+func HasNotNullFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasNoDefaultValueFlag checks if NoDefaultValueFlag is set.
-func HasNoDefaultValueFlag(flag uint) bool {
-	return (flag & NoDefaultValueFlag) > 0
-}
+func HasNoDefaultValueFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasAutoIncrementFlag checks if AutoIncrementFlag is set.
-func HasAutoIncrementFlag(flag uint) bool {
-	return (flag & AutoIncrementFlag) > 0
-}
+func HasAutoIncrementFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasUnsignedFlag checks if UnsignedFlag is set.
-func HasUnsignedFlag(flag uint) bool {
-	return (flag & UnsignedFlag) > 0
-}
+func HasUnsignedFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasZerofillFlag checks if ZerofillFlag is set.
-func HasZerofillFlag(flag uint) bool {
-	return (flag & ZerofillFlag) > 0
-}
+func HasZerofillFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasBinaryFlag checks if BinaryFlag is set.
-func HasBinaryFlag(flag uint) bool {
-	return (flag & BinaryFlag) > 0
-}
+func HasBinaryFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasPriKeyFlag checks if PriKeyFlag is set.
-func HasPriKeyFlag(flag uint) bool {
-	return (flag & PriKeyFlag) > 0
-}
+func HasPriKeyFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasUniKeyFlag checks if UniqueKeyFlag is set.
-func HasUniKeyFlag(flag uint) bool {
-	return (flag & UniqueKeyFlag) > 0
-}
+func HasUniKeyFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasMultipleKeyFlag checks if MultipleKeyFlag is set.
-func HasMultipleKeyFlag(flag uint) bool {
-	return (flag & MultipleKeyFlag) > 0
-}
+func HasMultipleKeyFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasTimestampFlag checks if HasTimestampFlag is set.
-func HasTimestampFlag(flag uint) bool {
-	return (flag & TimestampFlag) > 0
-}
+func HasTimestampFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasOnUpdateNowFlag checks if OnUpdateNowFlag is set.
-func HasOnUpdateNowFlag(flag uint) bool {
-	return (flag & OnUpdateNowFlag) > 0
-}
+func HasOnUpdateNowFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasParseToJSONFlag checks if ParseToJSONFlag is set.
-func HasParseToJSONFlag(flag uint) bool {
-	return (flag & ParseToJSONFlag) > 0
-}
+func HasParseToJSONFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasIsBooleanFlag checks if IsBooleanFlag is set.
-func HasIsBooleanFlag(flag uint) bool {
-	return (flag & IsBooleanFlag) > 0
-}
+func HasIsBooleanFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasPreventNullInsertFlag checks if PreventNullInsertFlag is set.
-func HasPreventNullInsertFlag(flag uint) bool {
-	return (flag & PreventNullInsertFlag) > 0
-}
+func HasPreventNullInsertFlag(flag uint) bool { _ = "STUB: not implemented"; return false }
 
 // HasEnumSetAsIntFlag checks if EnumSetAsIntFlag is set.
-func HasEnumSetAsIntFlag(flag uint) bool {
-	return (flag & EnumSetAsIntFlag) > 0
-}
+func HasEnumSetAsIntFlag(flag uint) bool { _ = "STUB: not implemented"; return false }

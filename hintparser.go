@@ -15,12 +15,7 @@
 
 package parser
 
-import __yyfmt__ "fmt"
-
 import (
-	"math"
-	"strconv"
-
 	"github.com/pingcap/parser/ast"
 	"github.com/pingcap/parser/model"
 )
@@ -850,483 +845,53 @@ type yyhintLexerEx interface {
 	Reduced(rule, state int, lval *yyhintSymType) bool
 }
 
-func yyhintSymName(c int) (s string) {
-	x, ok := yyhintXLAT[c]
-	if ok {
-		return yyhintSymNames[x]
-	}
-
-	return __yyfmt__.Sprintf("%d", c)
-}
+func yyhintSymName(c int) (s string) { _ = "STUB: not implemented"; return "" }
 
 func yyhintlex1(yylex yyhintLexer, lval *yyhintSymType) (n int) {
-	n = yylex.Lex(lval)
-	if n <= 0 {
-		n = yyhintEOFCode
-	}
-	if yyhintDebug >= 3 {
-		__yyfmt__.Printf("\nlex %s(%#x %d), lval: %+v\n", yyhintSymName(n), n, n, lval)
-	}
-	return n
-}
-
-func yyhintParse(yylex yyhintLexer, parser *hintParser) int {
-	const yyError = 111
-
-	yyEx, _ := yylex.(yyhintLexerEx)
-	var yyn int
-	parser.yylval = yyhintSymType{}
-	yyS := parser.cache
-
-	Nerrs := 0   /* number of errors */
-	Errflag := 0 /* error recovery flag */
-	yyerrok := func() {
-		if yyhintDebug >= 2 {
-			__yyfmt__.Printf("yyerrok()\n")
-		}
-		Errflag = 0
-	}
-	_ = yyerrok
-	yystate := 0
-	yychar := -1
-	var yyxchar int
-	var yyshift int
-	yyp := -1
-	goto yystack
-
-ret0:
+	_ = "STUB: not implemented"
 	return 0
-
-ret1:
-	return 1
-
-yystack:
-	/* put a state and value onto the stack */
-	yyp++
-	if yyp+1 >= len(yyS) {
-		nyys := make([]yyhintSymType, len(yyS)*2)
-		copy(nyys, yyS)
-		yyS = nyys
-		parser.cache = yyS
-	}
-	parser.yyVAL = &yyS[yyp+1]
-	yyS[yyp].yys = yystate
-
-yynewstate:
-	if yychar < 0 {
-		yychar = yyhintlex1(yylex, &parser.yylval)
-		var ok bool
-		if yyxchar, ok = yyhintXLAT[yychar]; !ok {
-			yyxchar = len(yyhintSymNames) // > tab width
-		}
-	}
-	if yyhintDebug >= 4 {
-		var a []int
-		for _, v := range yyS[:yyp+1] {
-			a = append(a, v.yys)
-		}
-		__yyfmt__.Printf("state stack %v\n", a)
-	}
-	row := yyhintParseTab[yystate]
-	yyn = 0
-	if yyxchar < len(row) {
-		if yyn = int(row[yyxchar]); yyn != 0 {
-			yyn += yyhintTabOfs
-		}
-	}
-	switch {
-	case yyn > 0: // shift
-		yychar = -1
-		*parser.yyVAL = parser.yylval
-		yystate = yyn
-		yyshift = yyn
-		if yyhintDebug >= 2 {
-			__yyfmt__.Printf("shift, and goto state %d\n", yystate)
-		}
-		if Errflag > 0 {
-			Errflag--
-		}
-		goto yystack
-	case yyn < 0: // reduce
-	case yystate == 1: // accept
-		if yyhintDebug >= 2 {
-			__yyfmt__.Println("accept")
-		}
-		goto ret0
-	}
-
-	if yyn == 0 {
-		/* error ... attempt to resume parsing */
-		switch Errflag {
-		case 0: /* brand new error */
-			if yyhintDebug >= 1 {
-				__yyfmt__.Printf("no action for %s in state %d\n", yyhintSymName(yychar), yystate)
-			}
-			msg, ok := yyhintXErrors[yyhintXError{yystate, yyxchar}]
-			if !ok {
-				msg, ok = yyhintXErrors[yyhintXError{yystate, -1}]
-			}
-			if !ok && yyshift != 0 {
-				msg, ok = yyhintXErrors[yyhintXError{yyshift, yyxchar}]
-			}
-			if !ok {
-				msg, ok = yyhintXErrors[yyhintXError{yyshift, -1}]
-			}
-			if !ok || msg == "" {
-				msg = "syntax error"
-			}
-			// ignore goyacc error message
-			yylex.AppendError(yylex.Errorf(""))
-			Nerrs++
-			fallthrough
-
-		case 1, 2: /* incompletely recovered error ... try again */
-			Errflag = 3
-
-			/* find a state where "error" is a legal shift action */
-			for yyp >= 0 {
-				row := yyhintParseTab[yyS[yyp].yys]
-				if yyError < len(row) {
-					yyn = int(row[yyError]) + yyhintTabOfs
-					if yyn > 0 { // hit
-						if yyhintDebug >= 2 {
-							__yyfmt__.Printf("error recovery found error shift in state %d\n", yyS[yyp].yys)
-						}
-						yystate = yyn /* simulate a shift of "error" */
-						goto yystack
-					}
-				}
-
-				/* the current p has no shift on "error", pop stack */
-				if yyhintDebug >= 2 {
-					__yyfmt__.Printf("error recovery pops state %d\n", yyS[yyp].yys)
-				}
-				yyp--
-			}
-			/* there is no state on the stack with an error shift ... abort */
-			if yyhintDebug >= 2 {
-				__yyfmt__.Printf("error recovery failed\n")
-			}
-			goto ret1
-
-		case 3: /* no shift yet; clobber input char */
-			if yyhintDebug >= 2 {
-				__yyfmt__.Printf("error recovery discards %s\n", yyhintSymName(yychar))
-			}
-			if yychar == yyhintEOFCode {
-				goto ret1
-			}
-
-			yychar = -1
-			goto yynewstate /* try again in the same state */
-		}
-	}
-
-	r := -yyn
-	x0 := yyhintReductions[r]
-	x, n := x0.xsym, x0.components
-	yypt := yyp
-	_ = yypt // guard against "declared and not used"
-
-	yyp -= n
-	if yyp+1 >= len(yyS) {
-		nyys := make([]yyhintSymType, len(yyS)*2)
-		copy(nyys, yyS)
-		yyS = nyys
-		parser.cache = yyS
-	}
-	parser.yyVAL = &yyS[yyp+1]
-
-	/* consult goto table to find next state */
-	exState := yystate
-	yystate = int(yyhintParseTab[yyS[yyp].yys][x]) + yyhintTabOfs
-	/* reduction by production r */
-	if yyhintDebug >= 2 {
-		__yyfmt__.Printf("reduce using rule %v (%s), and goto state %d\n", r, yyhintSymNames[x], yystate)
-	}
-
-	switch r {
-	case 1:
-		{
-			parser.result = yyS[yypt-0].hints
-		}
-	case 2:
-		{
-			if yyS[yypt-0].hint != nil {
-				parser.yyVAL.hints = []*ast.TableOptimizerHint{yyS[yypt-0].hint}
-			}
-		}
-	case 3:
-		{
-			if yyS[yypt-0].hint != nil {
-				parser.yyVAL.hints = append(yyS[yypt-2].hints, yyS[yypt-0].hint)
-			} else {
-				parser.yyVAL.hints = yyS[yypt-2].hints
-			}
-		}
-	case 4:
-		{
-			parser.yyVAL.hints = yyS[yypt-0].hints
-		}
-	case 5:
-		{
-			parser.yyVAL.hints = append(yyS[yypt-2].hints, yyS[yypt-0].hints...)
-		}
-	case 6:
-		{
-			parser.warnUnsupportedHint(yyS[yypt-3].ident)
-			parser.yyVAL.hint = nil
-		}
-	case 7:
-		{
-			parser.warnUnsupportedHint(yyS[yypt-3].ident)
-			parser.yyVAL.hint = nil
-		}
-	case 8:
-		{
-			parser.warnUnsupportedHint(yyS[yypt-3].ident)
-			parser.yyVAL.hint = nil
-		}
-	case 9:
-		{
-			h := yyS[yypt-1].hint
-			h.HintName = model.NewCIStr(yyS[yypt-3].ident)
-			parser.yyVAL.hint = h
-		}
-	case 10:
-		{
-			parser.warnUnsupportedHint(yyS[yypt-3].ident)
-			parser.yyVAL.hint = nil
-		}
-	case 11:
-		{
-			h := yyS[yypt-1].hint
-			h.HintName = model.NewCIStr(yyS[yypt-3].ident)
-			parser.yyVAL.hint = h
-		}
-	case 12:
-		{
-			parser.warnUnsupportedHint(yyS[yypt-4].ident)
-			parser.yyVAL.hint = nil
-		}
-	case 13:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{
-				HintName: model.NewCIStr(yyS[yypt-4].ident),
-				QBName:   model.NewCIStr(yyS[yypt-2].ident),
-				HintData: yyS[yypt-1].number,
-			}
-		}
-	case 14:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{
-				HintName: model.NewCIStr(yyS[yypt-4].ident),
-				QBName:   model.NewCIStr(yyS[yypt-2].ident),
-				HintData: int64(yyS[yypt-1].number),
-			}
-		}
-	case 15:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{
-				HintName: model.NewCIStr(yyS[yypt-5].ident),
-				HintData: ast.HintSetVar{
-					VarName: yyS[yypt-3].ident,
-					Value:   yyS[yypt-1].ident,
-				},
-			}
-		}
-	case 16:
-		{
-			parser.warnUnsupportedHint(yyS[yypt-3].ident)
-			parser.yyVAL.hint = nil
-		}
-	case 17:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{
-				HintName: model.NewCIStr(yyS[yypt-3].ident),
-				QBName:   model.NewCIStr(yyS[yypt-1].ident),
-			}
-		}
-	case 18:
-		{
-			maxValue := uint64(math.MaxInt64) / yyS[yypt-1].number
-			if yyS[yypt-2].number <= maxValue {
-				parser.yyVAL.hint = &ast.TableOptimizerHint{
-					HintName: model.NewCIStr(yyS[yypt-5].ident),
-					HintData: int64(yyS[yypt-2].number * yyS[yypt-1].number),
-					QBName:   model.NewCIStr(yyS[yypt-3].ident),
-				}
-			} else {
-				yylex.AppendError(ErrWarnMemoryQuotaOverflow.GenWithStackByArgs(math.MaxInt64))
-				parser.lastErrorAsWarn()
-				parser.yyVAL.hint = nil
-			}
-		}
-	case 19:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{
-				HintName: model.NewCIStr(yyS[yypt-5].ident),
-				HintData: ast.HintTimeRange{
-					From: yyS[yypt-3].ident,
-					To:   yyS[yypt-1].ident,
-				},
-			}
-		}
-	case 20:
-		{
-			h := yyS[yypt-1].hint
-			h.HintName = model.NewCIStr(yyS[yypt-4].ident)
-			h.QBName = model.NewCIStr(yyS[yypt-2].ident)
-			parser.yyVAL.hint = h
-		}
-	case 21:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{
-				HintName: model.NewCIStr(yyS[yypt-3].ident),
-				QBName:   model.NewCIStr(yyS[yypt-1].ident),
-			}
-		}
-	case 22:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{
-				HintName: model.NewCIStr(yyS[yypt-4].ident),
-				QBName:   model.NewCIStr(yyS[yypt-2].ident),
-				HintData: model.NewCIStr(yyS[yypt-1].ident),
-			}
-		}
-	case 23:
-		{
-			hs := yyS[yypt-1].hints
-			name := model.NewCIStr(yyS[yypt-4].ident)
-			qb := model.NewCIStr(yyS[yypt-2].ident)
-			for _, h := range hs {
-				h.HintName = name
-				h.QBName = qb
-			}
-			parser.yyVAL.hints = hs
-		}
-	case 24:
-		{
-			parser.yyVAL.hints = []*ast.TableOptimizerHint{yyS[yypt-0].hint}
-		}
-	case 25:
-		{
-			parser.yyVAL.hints = append(yyS[yypt-2].hints, yyS[yypt-0].hint)
-		}
-	case 26:
-		{
-			h := yyS[yypt-1].hint
-			h.HintData = model.NewCIStr(yyS[yypt-3].ident)
-			parser.yyVAL.hint = h
-		}
-	case 27:
-		{
-			parser.yyVAL.ident = ""
-		}
-	case 31:
-		{
-			parser.yyVAL.modelIdents = nil
-		}
-	case 32:
-		{
-			parser.yyVAL.modelIdents = yyS[yypt-1].modelIdents
-		}
-	case 33:
-		{
-			parser.yyVAL.modelIdents = []model.CIStr{model.NewCIStr(yyS[yypt-0].ident)}
-		}
-	case 34:
-		{
-			parser.yyVAL.modelIdents = append(yyS[yypt-2].modelIdents, model.NewCIStr(yyS[yypt-0].ident))
-		}
-	case 36:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{
-				QBName: model.NewCIStr(yyS[yypt-0].ident),
-			}
-		}
-	case 37:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{
-				Tables: []ast.HintTable{yyS[yypt-0].table},
-				QBName: model.NewCIStr(yyS[yypt-1].ident),
-			}
-		}
-	case 38:
-		{
-			h := yyS[yypt-2].hint
-			h.Tables = append(h.Tables, yyS[yypt-0].table)
-			parser.yyVAL.hint = h
-		}
-	case 39:
-		{
-			parser.yyVAL.table = ast.HintTable{
-				TableName:     model.NewCIStr(yyS[yypt-2].ident),
-				QBName:        model.NewCIStr(yyS[yypt-1].ident),
-				PartitionList: yyS[yypt-0].modelIdents,
-			}
-		}
-	case 40:
-		{
-			parser.yyVAL.table = ast.HintTable{
-				DBName:        model.NewCIStr(yyS[yypt-4].ident),
-				TableName:     model.NewCIStr(yyS[yypt-2].ident),
-				QBName:        model.NewCIStr(yyS[yypt-1].ident),
-				PartitionList: yyS[yypt-0].modelIdents,
-			}
-		}
-	case 41:
-		{
-			h := yyS[yypt-0].hint
-			h.Tables = []ast.HintTable{yyS[yypt-2].table}
-			h.QBName = model.NewCIStr(yyS[yypt-3].ident)
-			parser.yyVAL.hint = h
-		}
-	case 42:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{}
-		}
-	case 44:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{
-				Indexes: []model.CIStr{model.NewCIStr(yyS[yypt-0].ident)},
-			}
-		}
-	case 45:
-		{
-			h := yyS[yypt-2].hint
-			h.Indexes = append(h.Indexes, model.NewCIStr(yyS[yypt-0].ident))
-			parser.yyVAL.hint = h
-		}
-	case 52:
-		{
-			parser.yyVAL.ident = strconv.FormatUint(yyS[yypt-0].number, 10)
-		}
-	case 53:
-		{
-			parser.yyVAL.number = 1024 * 1024
-		}
-	case 54:
-		{
-			parser.yyVAL.number = 1024 * 1024 * 1024
-		}
-	case 55:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{HintData: true}
-		}
-	case 56:
-		{
-			parser.yyVAL.hint = &ast.TableOptimizerHint{HintData: false}
-		}
-
-	}
-
-	if !parser.lexer.skipPositionRecording {
-		yyhintSetOffset(parser.yyVAL, parser.yyVAL.offset)
-	}
-
-	if yyEx != nil && yyEx.Reduced(r, exState, parser.yyVAL) {
-		return -1
-	}
-	goto yystack /* stack new state and value */
 }
+
+func yyhintParse(yylex yyhintLexer, parser *hintParser) int { _ = "STUB: not implemented"; return 0 }
+
+/* number of errors */
+/* error recovery flag */
+
+/* put a state and value onto the stack */
+
+// > tab width
+
+// shift
+
+// reduce
+// accept
+
+/* error ... attempt to resume parsing */
+
+/* brand new error */
+
+// ignore goyacc error message
+
+/* incompletely recovered error ... try again */
+
+/* find a state where "error" is a legal shift action */
+
+// hit
+
+/* simulate a shift of "error" */
+
+/* the current p has no shift on "error", pop stack */
+
+/* there is no state on the stack with an error shift ... abort */
+
+/* no shift yet; clobber input char */
+
+/* try again in the same state */
+
+// guard against "declared and not used"
+
+/* consult goto table to find next state */
+
+/* reduction by production r */
+
+/* stack new state and value */

@@ -39,11 +39,4 @@ var featureIDs = map[string]struct{}{
 	FeatureIDPlacement:      {},
 }
 
-func CanParseFeature(fs ...string) bool {
-	for _, f := range fs {
-		if _, ok := featureIDs[f]; !ok {
-			return false
-		}
-	}
-	return true
-}
+func CanParseFeature(fs ...string) bool { _ = "STUB: not implemented"; return false }

@@ -14,7 +14,6 @@
 package ast
 
 import (
-	"github.com/pingcap/errors"
 	"github.com/pingcap/parser/format"
 	"github.com/pingcap/parser/model"
 )
@@ -75,15 +74,7 @@ const (
 )
 
 // String implements fmt.Stringer for HistogramOperationType.
-func (hot HistogramOperationType) String() string {
-	switch hot {
-	case HistogramOperationUpdate:
-		return "UPDATE HISTOGRAM"
-	case HistogramOperationDrop:
-		return "DROP HISTOGRAM"
-	}
-	return ""
-}
+func (hot HistogramOperationType) String() string { _ = "STUB: not implemented"; return "" }
 
 // AnalyzeOpt stores the analyze option type and value.
 type AnalyzeOpt struct {
@@ -93,81 +84,14 @@ type AnalyzeOpt struct {
 
 // Restore implements Node interface.
 func (n *AnalyzeTableStmt) Restore(ctx *format.RestoreCtx) error {
-	if n.Incremental {
-		ctx.WriteKeyWord("ANALYZE INCREMENTAL TABLE ")
-	} else {
-		ctx.WriteKeyWord("ANALYZE TABLE ")
-	}
-	for i, table := range n.TableNames {
-		if i != 0 {
-			ctx.WritePlain(",")
-		}
-		if err := table.Restore(ctx); err != nil {
-			return errors.Annotatef(err, "An error occurred while restore AnalyzeTableStmt.TableNames[%d]", i)
-		}
-	}
-	if len(n.PartitionNames) != 0 {
-		ctx.WriteKeyWord(" PARTITION ")
-	}
-	for i, partition := range n.PartitionNames {
-		if i != 0 {
-			ctx.WritePlain(",")
-		}
-		ctx.WriteName(partition.O)
-	}
-	if n.HistogramOperation != HistogramOperationNop {
-		ctx.WritePlain(" ")
-		ctx.WriteKeyWord(n.HistogramOperation.String())
-		ctx.WritePlain(" ")
-	}
-	if len(n.ColumnNames) > 0 {
-		ctx.WriteKeyWord("ON ")
-		for i, columnName := range n.ColumnNames {
-			if i != 0 {
-				ctx.WritePlain(",")
-			}
-			ctx.WriteName(columnName.Name.O)
-		}
-	}
-	if n.IndexFlag {
-		ctx.WriteKeyWord(" INDEX")
-	}
-	for i, index := range n.IndexNames {
-		if i != 0 {
-			ctx.WritePlain(",")
-		} else {
-			ctx.WritePlain(" ")
-		}
-		ctx.WriteName(index.O)
-	}
-	if len(n.AnalyzeOpts) != 0 {
-		ctx.WriteKeyWord(" WITH")
-		for i, opt := range n.AnalyzeOpts {
-			if i != 0 {
-				ctx.WritePlain(",")
-			}
-			ctx.WritePlainf(" %d ", opt.Value)
-			ctx.WritePlain(AnalyzeOptionString[opt.Type])
-		}
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Accept implements Node Accept interface.
 func (n *AnalyzeTableStmt) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*AnalyzeTableStmt)
-	for i, val := range n.TableNames {
-		node, ok := val.Accept(v)
-		if !ok {
-			return n, false
-		}
-		n.TableNames[i] = node.(*TableName)
-	}
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // DropStatsStmt is used to drop table statistics.
@@ -181,41 +105,14 @@ type DropStatsStmt struct {
 
 // Restore implements Node interface.
 func (n *DropStatsStmt) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("DROP STATS ")
-	if err := n.Table.Restore(ctx); err != nil {
-		return errors.Annotate(err, "An error occurred while add table")
-	}
-
-	if n.IsGlobalStats {
-		ctx.WriteKeyWord(" GLOBAL")
-		return nil
-	}
-
-	if len(n.PartitionNames) != 0 {
-		ctx.WriteKeyWord(" PARTITION ")
-	}
-	for i, partition := range n.PartitionNames {
-		if i != 0 {
-			ctx.WritePlain(",")
-		}
-		ctx.WriteName(partition.O)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Accept implements Node Accept interface.
 func (n *DropStatsStmt) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*DropStatsStmt)
-	node, ok := n.Table.Accept(v)
-	if !ok {
-		return n, false
-	}
-	n.Table = node.(*TableName)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }
 
 // LoadStatsStmt is the statement node for loading statistic.
@@ -227,17 +124,12 @@ type LoadStatsStmt struct {
 
 // Restore implements Node interface.
 func (n *LoadStatsStmt) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("LOAD STATS ")
-	ctx.WriteString(n.Path)
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // Accept implements Node Accept interface.
 func (n *LoadStatsStmt) Accept(v Visitor) (Node, bool) {
-	newNode, skipChildren := v.Enter(n)
-	if skipChildren {
-		return v.Leave(newNode)
-	}
-	n = newNode.(*LoadStatsStmt)
-	return v.Leave(n)
+	_ = "STUB: not implemented"
+	return *new(Node), false
 }

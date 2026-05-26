@@ -49,13 +49,7 @@ var defaultLengthAndDecimal = map[byte]lengthAndDecimal{
 }
 
 // IsIntegerType indicate whether tp is an integer type.
-func IsIntegerType(tp byte) bool {
-	switch tp {
-	case TypeTiny, TypeShort, TypeInt24, TypeLong, TypeLonglong:
-		return true
-	}
-	return false
-}
+func IsIntegerType(tp byte) bool { _ = "STUB: not implemented"; return false }
 
 // GetDefaultFieldLengthAndDecimal returns the default display length (flen) and decimal length for column.
 // Call this when no Flen assigned in ddl.
@@ -63,11 +57,8 @@ func IsIntegerType(tp byte) bool {
 // For example: "select count(*) from t;", the column type is int64 and Flen in ResultField will be 21.
 // See https://dev.mysql.com/doc/refman/5.7/en/storage-requirements.html
 func GetDefaultFieldLengthAndDecimal(tp byte) (flen int, decimal int) {
-	val, ok := defaultLengthAndDecimal[tp]
-	if ok {
-		return val.length, val.decimal
-	}
-	return -1, -1
+	_ = "STUB: not implemented"
+	return 0, 0
 }
 
 // defaultLengthAndDecimal provides default Flen and Decimal for fields
@@ -87,9 +78,6 @@ var defaultLengthAndDecimalForCast = map[byte]lengthAndDecimal{
 // GetDefaultFieldLengthAndDecimalForCast returns the default display length (flen) and decimal length for casted column
 // when flen or decimal is not specified.
 func GetDefaultFieldLengthAndDecimalForCast(tp byte) (flen int, decimal int) {
-	val, ok := defaultLengthAndDecimalForCast[tp]
-	if ok {
-		return val.length, val.decimal
-	}
-	return -1, -1
+	_ = "STUB: not implemented"
+	return 0, 0
 }

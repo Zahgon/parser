@@ -14,8 +14,6 @@
 package auth
 
 import (
-	"fmt"
-
 	"github.com/pingcap/parser/format"
 )
 
@@ -30,29 +28,22 @@ type UserIdentity struct {
 
 // Restore implements Node interface.
 func (user *UserIdentity) Restore(ctx *format.RestoreCtx) error {
-	if user.CurrentUser {
-		ctx.WriteKeyWord("CURRENT_USER")
-	} else {
-		ctx.WriteName(user.Username)
-		ctx.WritePlain("@")
-		ctx.WriteName(user.Hostname)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // String converts UserIdentity to the format user@host.
 func (user *UserIdentity) String() string {
+	_ = "STUB: not implemented"
 	// TODO: Escape username and hostname.
-	if user == nil {
-		return ""
-	}
-	return fmt.Sprintf("%s@%s", user.Username, user.Hostname)
+	return ""
 }
 
 // AuthIdentityString returns matched identity in user@host format
 func (user *UserIdentity) AuthIdentityString() string {
+	_ = "STUB: not implemented"
 	// TODO: Escape username and hostname.
-	return fmt.Sprintf("%s@%s", user.AuthUsername, user.AuthHostname)
+	return ""
 }
 
 type RoleIdentity struct {
@@ -61,16 +52,13 @@ type RoleIdentity struct {
 }
 
 func (role *RoleIdentity) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteName(role.Username)
-	if role.Hostname != "" {
-		ctx.WritePlain("@")
-		ctx.WriteName(role.Hostname)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // String converts UserIdentity to the format user@host.
 func (role *RoleIdentity) String() string {
+	_ = "STUB: not implemented"
 	// TODO: Escape username and hostname.
-	return fmt.Sprintf("`%s`@`%s`", role.Username, role.Hostname)
+	return ""
 }

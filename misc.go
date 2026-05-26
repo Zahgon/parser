@@ -13,30 +13,15 @@
 
 package parser
 
-import (
-	"reflect"
-	"unsafe"
-)
+func isLetter(ch rune) bool { _ = "STUB: not implemented"; return false }
 
-func isLetter(ch rune) bool {
-	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
-}
+func isDigit(ch rune) bool { _ = "STUB: not implemented"; return false }
 
-func isDigit(ch rune) bool {
-	return ch >= '0' && ch <= '9'
-}
+func isIdentChar(ch rune) bool { _ = "STUB: not implemented"; return false }
 
-func isIdentChar(ch rune) bool {
-	return isLetter(ch) || isDigit(ch) || ch == '_' || ch == '$' || isIdentExtend(ch)
-}
+func isIdentExtend(ch rune) bool { _ = "STUB: not implemented"; return false }
 
-func isIdentExtend(ch rune) bool {
-	return ch >= 0x80 && ch <= '\uffff'
-}
-
-func isUserVarChar(ch rune) bool {
-	return isLetter(ch) || isDigit(ch) || ch == '_' || ch == '$' || ch == '.' || isIdentExtend(ch)
-}
+func isUserVarChar(ch rune) bool { _ = "STUB: not implemented"; return false }
 
 type trieNode struct {
 	childs [256]*trieNode
@@ -46,32 +31,13 @@ type trieNode struct {
 
 var ruleTable trieNode
 
-func initTokenByte(c byte, tok int) {
-	if ruleTable.childs[c] == nil {
-		ruleTable.childs[c] = &trieNode{}
-	}
-	ruleTable.childs[c].token = tok
-}
+func initTokenByte(c byte, tok int) { _ = "STUB: not implemented"; return }
 
-func initTokenString(str string, tok int) {
-	node := &ruleTable
-	for _, c := range str {
-		if node.childs[c] == nil {
-			node.childs[c] = &trieNode{}
-		}
-		node = node.childs[c]
-	}
-	node.token = tok
-}
+func initTokenString(str string, tok int) { _ = "STUB: not implemented"; return }
 
 func initTokenFunc(str string, fn func(s *Scanner) (int, Pos, string)) {
-	for i := 0; i < len(str); i++ {
-		c := str[i]
-		if ruleTable.childs[c] == nil {
-			ruleTable.childs[c] = &trieNode{}
-		}
-		ruleTable.childs[c].fn = fn
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 func init() {
@@ -132,10 +98,7 @@ func init() {
 }
 
 // isInTokenMap indicates whether the target string is contained in tokenMap.
-func isInTokenMap(target string) bool {
-	_, ok := tokenMap[target]
-	return ok
-}
+func isInTokenMap(target string) bool { _ = "STUB: not implemented"; return false }
 
 // tokenMap is a map of known identifiers to the parser token ID.
 // Please try to keep the map in alphabetical order.
@@ -949,54 +912,12 @@ var hintTokenMap = map[string]int{
 }
 
 func (s *Scanner) isTokenIdentifier(lit string, offset int) int {
+	_ = "STUB: not implemented"
 	// An identifier before or after '.' means it is part of a qualified identifier.
 	// We do not parse it as keyword.
-	if s.r.peek() == '.' {
-		return 0
-	}
-	if offset > 0 && s.r.s[offset-1] == '.' {
-		return 0
-	}
-	buf := &s.buf
-	buf.Reset()
-	buf.Grow(len(lit))
-	data := buf.Bytes()[:len(lit)]
-	for i := 0; i < len(lit); i++ {
-		if lit[i] >= 'a' && lit[i] <= 'z' {
-			data[i] = lit[i] + 'A' - 'a'
-		} else {
-			data[i] = lit[i]
-		}
-	}
-
-	checkBtFuncToken := false
-	if s.r.peek() == '(' {
-		checkBtFuncToken = true
-	} else if s.sqlMode.HasIgnoreSpaceMode() {
-		s.skipWhitespace()
-		if s.r.peek() == '(' {
-			checkBtFuncToken = true
-		}
-	}
-	if checkBtFuncToken {
-		if tok := btFuncTokenMap[string(data)]; tok != 0 {
-			return tok
-		}
-	}
-	tok, ok := tokenMap[string(data)]
-	if !ok && s.supportWindowFunc {
-		tok = windowFuncTokenMap[string(data)]
-	}
-	return tok
+	return 0
 }
 
 // Slice converts string to slice without copy.
 // Use at your own risk.
-func Slice(s string) (b []byte) {
-	pBytes := (*reflect.SliceHeader)(unsafe.Pointer(&b))
-	pString := (*reflect.StringHeader)(unsafe.Pointer(&s))
-	pBytes.Data = pString.Data
-	pBytes.Len = pString.Len
-	pBytes.Cap = pString.Len
-	return
-}
+func Slice(s string) (b []byte) { _ = "STUB: not implemented"; return nil }

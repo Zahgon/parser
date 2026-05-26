@@ -14,8 +14,6 @@
 package charset
 
 import (
-	"strings"
-
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
 	"golang.org/x/text/encoding/japanese"
@@ -30,13 +28,13 @@ import (
 // standard encodings for HTML. Matching is case-insensitive and ignores
 // leading and trailing whitespace.
 func Lookup(label string) (e encoding.Encoding, name string) {
-	label = strings.ToLower(strings.Trim(label, "\t\n\r\f "))
-	return lookup(Formatted(label))
+	_ = "STUB: not implemented"
+	return *new(encoding.Encoding), ""
 }
 
 func lookup(label EncodingLabel) (e encoding.Encoding, name string) {
-	enc := encodings[string(label)]
-	return enc.e, enc.name
+	_ = "STUB: not implemented"
+	return *new(encoding.Encoding), ""
 }
 
 var encodings = map[string]struct {
@@ -264,12 +262,7 @@ var encodings = map[string]struct {
 }
 
 // FindNextCharacterLength is used in lexer.peek() to determine the next character length.
-func FindNextCharacterLength(label string) func([]byte) int {
-	if f, ok := encodingNextCharacterLength[label]; ok {
-		return f
-	}
-	return nil
-}
+func FindNextCharacterLength(label string) func([]byte) int { _ = "STUB: not implemented"; return nil }
 
 var encodingNextCharacterLength = map[string]func([]byte) int{
 	// https://en.wikipedia.org/wiki/GBK_(character_encoding)#Layout_diagram

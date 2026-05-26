@@ -14,16 +14,10 @@
 package terror
 
 import (
-	"fmt"
-	"strconv"
-	"strings"
 	"sync"
-	"sync/atomic"
 
 	"github.com/pingcap/errors"
-	"github.com/pingcap/log"
 	"github.com/pingcap/parser/mysql"
-	"go.uber.org/zap"
 )
 
 // ErrCode represents a specific error type in a error class.
@@ -93,88 +87,39 @@ type code2ErrClassMap struct {
 	data sync.Map
 }
 
-func newCode2ErrClassMap() *code2ErrClassMap {
-	return &code2ErrClassMap{
-		data: sync.Map{},
-	}
-}
+func newCode2ErrClassMap() *code2ErrClassMap { _ = "STUB: not implemented"; return nil }
 
 func (m *code2ErrClassMap) Get(key string) (ErrClass, bool) {
-	ret, have := m.data.Load(key)
-	return ret.(ErrClass), have
+	_ = "STUB: not implemented"
+	return *new(ErrClass), false
 }
 
-func (m *code2ErrClassMap) Put(key string, err ErrClass) {
-	m.data.Store(key, err)
-}
+func (m *code2ErrClassMap) Put(key string, err ErrClass) { _ = "STUB: not implemented"; return }
 
 var registerFinish uint32
 
 // RegisterFinish makes the register of new error panic.
 // The use pattern should be register all the errors during initialization, and then call RegisterFinish.
-func RegisterFinish() {
-	atomic.StoreUint32(&registerFinish, 1)
-}
+func RegisterFinish() { _ = "STUB: not implemented"; return }
 
-func frozen() bool {
-	return atomic.LoadUint32(&registerFinish) != 0
-}
+func frozen() bool { _ = "STUB: not implemented"; return false }
 
 // RegisterErrorClass registers new error class for terror.
 func RegisterErrorClass(classCode int, desc string) ErrClass {
-	errClass := ErrClass(classCode)
-	if _, exists := errClass2Desc[errClass]; exists {
-		panic(fmt.Sprintf("duplicate register ClassCode %d - %s", classCode, desc))
-	}
-	errClass2Desc[errClass] = desc
-	return errClass
+	_ = "STUB: not implemented"
+	return *new(ErrClass)
 }
 
 // String implements fmt.Stringer interface.
-func (ec ErrClass) String() string {
-	if s, exists := errClass2Desc[ec]; exists {
-		return s
-	}
-	return strconv.Itoa(int(ec))
-}
+func (ec ErrClass) String() string { _ = "STUB: not implemented"; return "" }
 
 // EqualClass returns true if err is *Error with the same class.
-func (ec ErrClass) EqualClass(err error) bool {
-	e := errors.Cause(err)
-	if e == nil {
-		return false
-	}
-	if te, ok := e.(*Error); ok {
-		rfcCode := te.RFCCode()
-		if index := strings.Index(string(rfcCode), ":"); index > 0 {
-			if class, has := rfcCode2errClass.Get(string(rfcCode)[:index]); has {
-				return class == ec
-			}
-		}
-	}
-	return false
-}
+func (ec ErrClass) EqualClass(err error) bool { _ = "STUB: not implemented"; return false }
 
 // NotEqualClass returns true if err is not *Error with the same class.
-func (ec ErrClass) NotEqualClass(err error) bool {
-	return !ec.EqualClass(err)
-}
+func (ec ErrClass) NotEqualClass(err error) bool { _ = "STUB: not implemented"; return false }
 
-func (ec ErrClass) initError(code ErrCode) string {
-	if frozen() {
-		panic("register error after initialized is prohibited")
-	}
-	clsMap, ok := ErrClassToMySQLCodes[ec]
-	if !ok {
-		clsMap = make(map[ErrCode]struct{})
-		ErrClassToMySQLCodes[ec] = clsMap
-	}
-	clsMap[code] = struct{}{}
-	class := errClass2Desc[ec]
-	rfcCode := fmt.Sprintf("%s:%d", class, code)
-	rfcCode2errClass.Put(class, ec)
-	return rfcCode
-}
+func (ec ErrClass) initError(code ErrCode) string { _ = "STUB: not implemented"; return "" }
 
 // New defines an *Error with an error code and an error message.
 // Usually used to create base *Error.
@@ -183,67 +128,36 @@ func (ec ErrClass) initError(code ErrCode) string {
 // usually be used in global variable initializer
 //
 // Deprecated: use NewStd or NewStdErr instead.
-func (ec ErrClass) New(code ErrCode, message string) *Error {
-	rfcCode := ec.initError(code)
-	err := errors.Normalize(message, errors.MySQLErrorCode(int(code)), errors.RFCCodeText(rfcCode))
-	return err
-}
+func (ec ErrClass) New(code ErrCode, message string) *Error { _ = "STUB: not implemented"; return nil }
 
 // NewStdErr defines an *Error with an error code, an error
 // message and workaround to create standard error.
 func (ec ErrClass) NewStdErr(code ErrCode, message *mysql.ErrMessage) *Error {
-	rfcCode := ec.initError(code)
-	err := errors.Normalize(message.Raw, errors.RedactArgs(message.RedactArgPos), errors.MySQLErrorCode(int(code)), errors.RFCCodeText(rfcCode))
-	return err
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // NewStd calls New using the standard message for the error code
 // Attention:
 // this method is not goroutine-safe and
 // usually be used in global variable initializer
-func (ec ErrClass) NewStd(code ErrCode) *Error {
-	return ec.NewStdErr(code, mysql.MySQLErrName[uint16(code)])
-}
+func (ec ErrClass) NewStd(code ErrCode) *Error { _ = "STUB: not implemented"; return nil }
 
 // Synthesize synthesizes an *Error in the air
 // it didn't register error into ErrClassToMySQLCodes
 // so it's goroutine-safe
 // and often be used to create Error came from other systems like TiKV.
 func (ec ErrClass) Synthesize(code ErrCode, message string) *Error {
-	return errors.Normalize(message, errors.MySQLErrorCode(int(code)), errors.RFCCodeText(fmt.Sprintf("%s:%d", errClass2Desc[ec], code)))
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // ToSQLError convert Error to mysql.SQLError.
-func ToSQLError(e *Error) *mysql.SQLError {
-	code := getMySQLErrorCode(e)
-	return mysql.NewErrf(code, "%s", nil, e.GetMsg())
-}
+func ToSQLError(e *Error) *mysql.SQLError { _ = "STUB: not implemented"; return nil }
 
 var defaultMySQLErrorCode uint16
 
-func getMySQLErrorCode(e *Error) uint16 {
-	rfcCode := e.RFCCode()
-	var class ErrClass
-	if index := strings.Index(string(rfcCode), ":"); index > 0 {
-		if ec, has := rfcCode2errClass.Get(string(rfcCode)[:index]); has {
-			class = ec
-		} else {
-			log.Warn("Unknown error class", zap.String("class", string(rfcCode)[:index]))
-			return defaultMySQLErrorCode
-		}
-	}
-	codeMap, ok := ErrClassToMySQLCodes[class]
-	if !ok {
-		log.Warn("Unknown error class", zap.Int("class", int(class)))
-		return defaultMySQLErrorCode
-	}
-	_, ok = codeMap[ErrCode(e.Code())]
-	if !ok {
-		log.Debug("Unknown error code", zap.Int("class", int(class)), zap.Int("code", int(e.Code())))
-		return defaultMySQLErrorCode
-	}
-	return uint16(e.Code())
-}
+func getMySQLErrorCode(e *Error) uint16 { _ = "STUB: not implemented"; return 0 }
 
 var (
 	// ErrClassToMySQLCodes is the map of ErrClass to code-set.
@@ -257,63 +171,18 @@ func init() {
 }
 
 // ErrorEqual returns a boolean indicating whether err1 is equal to err2.
-func ErrorEqual(err1, err2 error) bool {
-	e1 := errors.Cause(err1)
-	e2 := errors.Cause(err2)
-
-	if e1 == e2 {
-		return true
-	}
-
-	if e1 == nil || e2 == nil {
-		return e1 == e2
-	}
-
-	te1, ok1 := e1.(*Error)
-	te2, ok2 := e2.(*Error)
-	if ok1 && ok2 {
-		return te1.RFCCode() == te2.RFCCode()
-	}
-
-	return e1.Error() == e2.Error()
-}
+func ErrorEqual(err1, err2 error) bool { _ = "STUB: not implemented"; return false }
 
 // ErrorNotEqual returns a boolean indicating whether err1 isn't equal to err2.
-func ErrorNotEqual(err1, err2 error) bool {
-	return !ErrorEqual(err1, err2)
-}
+func ErrorNotEqual(err1, err2 error) bool { _ = "STUB: not implemented"; return false }
 
 // MustNil cleans up and fatals if err is not nil.
-func MustNil(err error, closeFuns ...func()) {
-	if err != nil {
-		for _, f := range closeFuns {
-			f()
-		}
-		log.Fatal("unexpected error", zap.Error(err), zap.Stack("stack"))
-	}
-}
+func MustNil(err error, closeFuns ...func()) { _ = "STUB: not implemented"; return }
 
 // Call executes a function and checks the returned err.
-func Call(fn func() error) {
-	err := fn()
-	if err != nil {
-		log.Error("function call errored", zap.Error(err), zap.Stack("stack"))
-	}
-}
+func Call(fn func() error) { _ = "STUB: not implemented"; return }
 
 // Log logs the error if it is not nil.
-func Log(err error) {
-	if err != nil {
-		log.Error("encountered error", zap.Error(err), zap.Stack("stack"))
-	}
-}
+func Log(err error) { _ = "STUB: not implemented"; return }
 
-func GetErrClass(e *Error) ErrClass {
-	rfcCode := e.RFCCode()
-	if index := strings.Index(string(rfcCode), ":"); index > 0 {
-		if class, has := rfcCode2errClass.Get(string(rfcCode)[:index]); has {
-			return class
-		}
-	}
-	return ErrClass(-1)
-}
+func GetErrClass(e *Error) ErrClass { _ = "STUB: not implemented"; return *new(ErrClass) }

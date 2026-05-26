@@ -18,27 +18,16 @@
 package types
 
 import (
-	"strings"
-
 	"github.com/pingcap/parser/mysql"
 	"github.com/pingcap/parser/terror"
 )
 
 // IsTypeBlob returns a boolean indicating whether the tp is a blob type.
-func IsTypeBlob(tp byte) bool {
-	switch tp {
-	case mysql.TypeTinyBlob, mysql.TypeMediumBlob, mysql.TypeBlob, mysql.TypeLongBlob:
-		return true
-	default:
-		return false
-	}
-}
+func IsTypeBlob(tp byte) bool { _ = "STUB: not implemented"; return false }
 
 // IsTypeChar returns a boolean indicating
 // whether the tp is the char type like a string type or a varchar type.
-func IsTypeChar(tp byte) bool {
-	return tp == mysql.TypeString || tp == mysql.TypeVarchar
-}
+func IsTypeChar(tp byte) bool { _ = "STUB: not implemented"; return false }
 
 var type2Str = map[byte]string{
 	mysql.TypeBit:         "bit",
@@ -71,28 +60,16 @@ var type2Str = map[byte]string{
 }
 
 // TypeStr converts tp to a string.
-func TypeStr(tp byte) (r string) {
-	return type2Str[tp]
-}
+func TypeStr(tp byte) (r string) { _ = "STUB: not implemented"; return "" }
 
 // TypeToStr converts a field to a string.
 // It is used for converting Text to Blob,
 // or converting Char to Binary.
 // Args:
+//
 //	tp: type enum
 //	cs: charset
-func TypeToStr(tp byte, cs string) (r string) {
-	ts := type2Str[tp]
-	if cs != "binary" {
-		return ts
-	}
-	if IsTypeBlob(tp) {
-		ts = strings.Replace(ts, "text", "blob", 1)
-	} else if IsTypeChar(tp) {
-		ts = strings.Replace(ts, "char", "binary", 1)
-	}
-	return ts
-}
+func TypeToStr(tp byte, cs string) (r string) { _ = "STUB: not implemented"; return "" }
 
 var (
 	dig2bytes = [10]int{0, 1, 1, 2, 2, 3, 3, 4, 4, 4}
